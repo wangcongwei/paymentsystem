@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-mappings xmlns="http://java.sun.com/xml/ns/persistence/orm"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd"
+	version="2.0">
+	<package>com.newtouch.common.model.core</package>
+	
+	<mapped-superclass class="com.newtouch.common.model.BaseEntity">
+		<attributes>
+			<basic name="crtUserId">
+				<column name="CRT_USER_ID"/>
+			</basic>
+			<basic name="crtDttm">
+				<column name="CRT_DTTM"/>
+			</basic>
+			<basic name="lastuptUserId">
+				<column name="LASTUPT_USER_ID"/>
+			</basic>
+			<basic name="lastuptDttm">
+				<column name="LASTUPT_DTTM"/>
+			</basic>
+		</attributes>
+	</mapped-superclass>
+	
+	<entity class="AppConfig">
+		<table name="t_cfg_config" />
+		<attributes>
+			<id name="id">
+				<column name="CONFIG_ID" unique="true" nullable="false"/>
+				<generated-value strategy="IDENTITY" />
+			</id>
+			<basic name="code">
+				<column name="CODE"/>
+			</basic>
+			<basic name="cateCode">
+				<column name="CATE_CODE"/>
+			</basic>
+			<basic name="value">
+				<column name="VALUE"/>
+			</basic>
+			<basic name="valueExt">
+				<column name="VALUE_EXT"/>
+			</basic>
+			<basic name="enable">
+				<column name="ENABLE_FLG"/>
+			</basic>
+			<basic name="describe">
+				<column name="DESCRIBE"/>
+			</basic>
+		</attributes>
+	</entity>
+	<entity class="CodeCate">
+		<table name="t_cfg_code_cate"/>
+		<attributes>
+			<id name="id">
+				<column name="CODECATE_ID" unique="true" nullable="false"/>
+				<generated-value strategy="IDENTITY" />
+			</id>
+			<basic name="code">
+				<column name="CODE" />
+			</basic>
+			<basic name="name">
+				<column name="NAME" />
+			</basic>
+			<basic name="describe">
+				<column name="DESCRIBE"/>
+			</basic>
+		</attributes>
+	</entity>
+	<entity class="CodeEntry">
+		<table name="t_cfg_code_entry" />
+		<attributes>
+			<id name="id">
+				<column name="CODEENTIRY_ID" unique="true" nullable="false"/>
+				<generated-value strategy="IDENTITY" />
+			</id>
+			<basic name="code">
+				<column name="CODE"/>
+			</basic>
+			<basic name="pathCode">
+				<column name="PATH_CODE"/>
+			</basic>
+			<basic name="name">
+				<column name="NAME"/>
+			</basic>
+			<basic name="extProp1">
+				<column name="EXT_PROP1"/>
+			</basic>
+			<basic name="extProp2">
+				<column name="EXT_PROP2"/>
+			</basic>
+			<basic name="extProp3">
+				<column name="EXT_PROP3"/>
+			</basic>
+			<basic name="extProp4">
+				<column name="EXT_PROP4"/>
+			</basic>
+			<basic name="describe">
+				<column name="DESCRIBE"/>
+			</basic>
+		</attributes>
+	</entity>
+</entity-mappings>
