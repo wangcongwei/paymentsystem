@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:v="http://www.example.org/Validator/" targetNamespace="http://www.example.org/Validator/" elementFormDefault="qualified">
+    <element name="validates">
+        <complexType>
+            <sequence minOccurs="1" maxOccurs="unbounded">
+                <element name="request">
+                    <complexType>
+                        <sequence minOccurs="1" maxOccurs="unbounded">
+                            <element name="field">
+                                <complexType>
+                                    <attributeGroup ref="v:validAttrs"></attributeGroup>
+                                </complexType>
+                            </element>
+                        </sequence>
+                        <attribute name="url" type="string" use="required"></attribute>
+                        <attribute name="client-enable" type="boolean" use="required" default="true"></attribute>
+                        <attribute name="server-enable" type="boolean" use="required" default="true"></attribute>
+                    </complexType>
+                </element>
+            </sequence>
+        </complexType>
+    </element>
+
+    <attributeGroup name="validAttrs">
+        <attribute name="name" type="string" use="required"></attribute>
+        <attribute name="type" use="required" default="text">
+            <simpleType>
+                <restriction base="string">
+                    <enumeration value="email" />
+                    <enumeration value="url" />
+                    <enumeration value="pin" />
+                    <enumeration value="mobile-number" />
+                    <enumeration value="phone-number" />
+                    <enumeration value="integer" />
+                    <enumeration value="long" />
+                    <enumeration value="float" />
+                    <enumeration value="float-2" />
+                    <enumeration value="float-4" />
+                    <enumeration value="date" />
+                    <enumeration value="time" />
+                    <enumeration value="datetime" />
+                    <enumeration value="ip" />
+                    <enumeration value="word" />
+                    <enumeration value="letter" />
+                    <enumeration value="uppercase" />
+                    <enumeration value="lowercase" />
+                    <enumeration value="text" />
+                </restriction>
+            </simpleType>
+        </attribute>
+        <attribute name="required" type="boolean" use="required" default="false"></attribute>
+        <attribute name="min-len" type="integer" default="0"></attribute>
+        <attribute name="max-len" type="integer" default="20"></attribute>
+        <attribute name="range-start" type="string"></attribute>
+        <attribute name="range-end" type="string"></attribute>
+        <attribute name="pattern" type="string"></attribute>
+        <attribute name="err-msg" type="string"></attribute>
+        <attribute name="err-msg-code" type="string"></attribute>
+    </attributeGroup>
+</schema>
