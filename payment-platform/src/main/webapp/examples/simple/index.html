@@ -1,0 +1,142 @@
+﻿<!doctype html>
+<!--[if IE 8]> <html lang="en" class="ie8 no-js"> <![endif]-->
+<!--[if IE 9]> <html lang="en" class="ie9 no-js"> <![endif]-->
+<!--[if !IE]><!-->
+<html lang="en" class="no-js">
+<!--<![endif]-->
+<head>
+    <meta charset="UTF-8">
+    <title ng-bind="title"></title>
+</head>
+<body ng-controller="controller">
+
+﻿<div class="portlet box blue-madison">
+    <div class="portlet-title">
+        <div class="caption">
+            <i class="fa fa-gift"></i>CURD DEMO QUERY
+        </div>
+        <div class="tools">
+            <a href="javascript:;" class="collapse" data-original-title="" title=""> </a>
+            <a href="#portlet-config" data-toggle="modal" class="config" data-original-title="" title=""> </a>
+            <a href="javascript:;" class="remove" data-original-title="" title=""> </a>
+        </div>
+    </div>
+    <div class="portlet-body container-fluid" >
+        <div class="row">
+        <form ng-submit="flushGrid()" class="form-horizontal">
+                <div class="form-group col-md-6">
+                    <label class="col-md-3 control-label" for="codeCate"><span>*</span>产品大类：</label>
+                    <div class=" col-md-7">
+                        <select id="codeCate" ng-model="queryData.codeCate"  ng-options="m.code as m.name for m in listCodeCate.additionals.codeCate" class="select2me form-control">
+                            <option value="" >请选择</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group col-md-6">
+                    <label class="col-md-3 control-label"><span>*</span>产品子类：</label>
+                    <div class=" col-md-7">
+                        <select ng-model="queryData.codeEntry" ng-options="m.code as m.name for m in listCodeEntry.additionals.codeEntry" class="select2me form-control">
+                            <option value="" >请选择</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group col-md-6">
+                    <label class="col-md-3 control-label"><span>*</span>商品名称：</label>
+                    <div class=" col-md-7"><input ng-model="queryData.prodName" type="text" data-type="number" class="form-control" /></div>
+                </div>
+                <div class="form-group col-md-6">
+                    <label class="col-md-3 control-label"><span>*</span>起始价格：</label>
+                    <div class=" col-md-7"><input ng-model="queryData.price1" type="text" data-type="number" class="form-control" /></div>
+                </div>
+                <div class="form-group col-md-6">
+                    <label class="col-md-3 control-label"><span>*</span>截至价格：</label>
+                    <div class=" col-md-7"><input ng-model="queryData.price2" type="text" data-type="number" class="form-control" /></div>
+                </div>
+                <div class="form-group col-md-6">
+                    <div class="form-group col-md-3"></div>
+                    <button type="submit" class="btn purple"><i class="fa fa-check"></i>查询</button>
+                </div>
+        </form>
+        </div>
+    </div>
+</div>
+
+<div class="portlet box blue-madison">
+    <div class="portlet-title">
+        <div class="caption">
+            <i class="fa fa-comments"></i>产品数据
+        </div>
+        <div class="tools">
+            <a href="javascript:;" class="collapse" data-original-title="" title=""> </a>
+            <a href="#portlet-config" data-toggle="modal" class="config" data-original-title="" title=""> </a>
+            <a href="javascript:;" class="remove" data-original-title="" title=""> </a>
+        </div>
+    </div>
+    <div class="portlet-body" >
+        <table class="table table-bordered table-hover blue ">
+            <thead>
+            <tr>
+                <th class="text-center">
+                    <group-check id="g"></group-check>
+                </th>
+                <th class="col-md-1 text-center">ID</th>
+                <th class="col-md-1 text-center">商品条码</th>
+                <th class="col-md-2 text-center">商品名称</th>
+                <th class="col-md-1 text-center">价格</th>
+                <th class="col-md-2 text-center">创建时间</th>
+                <th class="col-md-2 text-center">更新时间</th>
+                <th class="col-md-1 text-center">查看</th>
+                <th class="col-md-1 text-center">修改</th>
+                <th class="col-md-1 text-center">删除</th>
+            </tr>
+            </thead>
+            <tbody>
+	            <tr  ng-repeat="item in data.content.content">
+                    <td><group-check-item ng-value='item' group='g'></group-check-item></td>
+	                <td class="text-center text-nowrap" ng-bind="item.id"></td>
+	                <td class="text-center text-nowrap" ng-bind="item.prodCode"></td>
+	                <td class="text-center text-nowrap" ng-bind="item.prodName"></td>
+	                <td class="text-center text-nowrap" ng-bind="item.price"></td>
+	                <td class="text-center text-nowrap" ng-bind="item.crtDttm"></td>
+	                <td class="text-center text-nowrap" ng-bind="item.lastuptDttm"></td>
+	                <td class="text-center text-nowrap"><a href="#/detail/{{item.id}}">查看</a></td>
+	                <td class="text-center text-nowrap"><a href="#/edit/{{item.id}}">修改</a></td>
+	                <td class="text-center text-nowrap"><a href='javascript:void(0)' ng-click="del(item.id)">删除</span></td>
+	            </tr>
+            </tbody>
+        </table>
+        <nav>
+            <ul class="ng-hide pagination" ng-show="pagingBar.inited">
+                <li>
+                    <span ng-click="pagingBar.first()">首 页</span>
+                </li>
+                <li><span ng-click="pagingBar.prev()">上一页</span></li>
+                <li><span ng-click="pagingBar.prevWindow()" aria-hidden="true">&laquo;</span></li>
+                <li ng-class="{'active': queryData.pageIndex==item}" ng-repeat="item in pagingBar.numbers"><span ng-click="pagingBar.go(item)">{{item}}</span></li>
+                <li><span ng-click="pagingBar.nextWindow()" aria-hidden="true">&raquo;</span></li>
+                <li><span ng-click="pagingBar.next()">下一页</span></li>
+                <li><span ng-click="pagingBar.last()">末页</span></li>
+                <li><span style="padding-top:3px;padding-bottom:3px;">跳转到 <input type="number" style="width:30px;" ng-model="queryData.pageIndex" ng-change="flushGrid()" /> 页</span></li>
+            </ul>
+        </nav>
+    </div>
+</div>
+
+<!--[if lte IE 8]>
+<script type="text/javascript" src="../../resources/global/plugins/json2.js"></script>
+<![endif]-->
+<!--[if lt IE 9]>
+<script type="text/javascript" src="../../resources/global/plugins/es5-shim.min.js"></script>
+<script type="text/javascript" src="../../resources/global/plugins/es5-sham.min.js"></script>
+<![endif]-->
+<script type="text/javascript" src="../../resources/scripts/sea.js"></script>
+<script type="text/javascript" src="../../resources/scripts/framework/framework-init.js"></script>
+<script>
+    //初始化应用
+    seajs.use(['app-init','scripts/examples/simple/simple'], function (init, index) {
+        init(index);
+    });
+
+</script>
+</body>
+</html>

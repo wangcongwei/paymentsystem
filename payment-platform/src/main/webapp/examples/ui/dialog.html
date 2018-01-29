@@ -1,0 +1,63 @@
+<!-- Button trigger modal -->
+<a value="显示对话框" data-toggle="modal" data-target="#myModal">显示对话框</a>
+<input type="button" class="btn blue" value="显示对话框" data-toggle="modal" data-target="#myModal">
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" style="width:750px" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">对话框DEMO</h4>
+      </div>
+      <div class="modal-body">
+        <form ng-submit="flushGrid()" class="form-horizontal">
+			<div class="inpbox">
+			<table>
+				<tr>
+					<th class="col-md-2 text-right">产品大类：</th>
+					<td class="col-md-3 text-left">
+		                <select chosen
+		                        allow-single-deselect="true"
+		                        data-placeholder="请选择..."
+		                        no-results-text="没有数据"
+		                        ng-model="queryData.codeCate"
+		                        ng-options="m.code as m.name for m in listCodeCate.additionals.codeCate"
+		                        ng-type="text"
+		                        class="form-control" ng-change="listCodeCateChangeFn()" width="180px">
+		                </select>
+                	</td>
+					<th class="col-md-2 text-right">产品子类：</th>
+					<td class="col-md-3 text-left">
+	                	<select chosen
+	                        allow-single-deselect="true"
+	                        data-placeholder="请选择..."
+	                        no-results-text="没有数据"
+	                        ng-model="queryData.codeEntry"
+	                        ng-type="text"
+	                        ng-options="x.code as x.name for x in listCodeEntry.additionals.codeEntry"
+	                       
+	                        class="form-control" width="180px"></select>
+	                 </td>
+	            </tr>
+                <tr>
+                	<th class="col-md-2 text-right">商品名称：</th>
+					<td class="col-md-3 text-left"><input ng-model="queryData.prodName" type="text" ng-type="long" class="form-control form_date" data-date-startdate="2015-07-10" data-date-enddate="2015-07-13" style="width:180px"/></td>
+					<th class="col-md-2 text-right">起始价格：</th>
+					<td class="col-md-3 text-left"><input ng-model="queryData.price1" type="text" ng-type="long"  class="form-control"  style="width:180px"/></td>
+				</tr>
+				<tr>
+                	<th class="col-md-2 text-right">截至价格：</th>
+                	<td class="col-md-3 text-left"><input ng-model="queryData.price2" type="text" ng-type="long"  class="form-control"  style="width:180px"/></td>
+                	<th></th>
+                	<td class="col-md-5 text-center"><button type="submit" class="btn purple"><i class="fa fa-check"></i>查询</button></td>
+                </tr>
+			</table>
+	        </div>
+	    </form>
+      </div>
+      <div class="modal-footer">
+      	<input type="button" class="btn blue" value="关闭" data-dismiss="modal"/>
+      </div>
+    </div>
+  </div>
+</div>

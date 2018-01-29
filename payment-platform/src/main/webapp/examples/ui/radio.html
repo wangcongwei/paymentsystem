@@ -1,0 +1,20 @@
+﻿<table class="table  table-hover blue " style="margin-top:50px;width:40%">
+    <thead>
+    <tr>
+        <th></th>
+        <th class="col-md-4 text-center">保单号</th>
+        <th class="col-md-4 text-center">主附险</th>
+        <th class="col-md-4 text-center">名称</th>
+    </tr>
+    </thead>
+    <tbody>
+        <tr ng-repeat="item in listData">
+            <td class="text-center">
+                <input iradio ng-value='item' ng-model="$parent.selectSimpleValue" ng-click="ss(item,$event)"/>
+            </td>
+            <td class="text-center text-nowrap" ng-bind="item.policyNo"></td>
+            <td class="text-center text-nowrap" ng-bind="item.type"></td>
+            <td class="text-center text-nowrap" ng-bind="item.name"></td>
+        </tr>
+    </tbody>
+</table>

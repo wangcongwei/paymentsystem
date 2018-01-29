@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-mappings xmlns="http://java.sun.com/xml/ns/persistence/orm"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd"
+	version="2.0">
+	<package>com.newtouch.payment.model</package>
+	<access>PROPERTY</access>
+	<!-- DEMO -->
+	<entity class="Order">
+		<table name="t_ORDER" />
+		<attributes>
+			<id name="id">
+				<column name="ID" />
+				<generated-value strategy="IDENTITY" />
+			</id>
+			<basic name="busOrderNo">
+				<column name="BUSORDER_NO" />
+			</basic>
+			<basic name="busDetail">
+				<column name="BUS_DETAIL" />
+			</basic>
+			<basic name="amount">
+				<column name="AMOUNT" />
+			</basic>
+			<basic name="orderNo">
+				<column name="ORDER_NO" />
+			</basic>
+			<basic name="creatTime">
+				<column name="CREATE_TIME" />
+			</basic>
+			<basic name="outTime">
+				<column name="OUT_TIME" />
+			</basic>
+			<basic name="updateTime">
+				<column name="UPDATE_TIME" />
+			</basic>
+			<basic name="orderStatus">
+				<column name="ORDER_STATUS" />
+			</basic>
+			<basic name="busNum">
+				<column name="BUS_NUM" />
+			</basic>
+			<basic name="ext1">
+				<column name="EXT1" />
+			</basic>
+			<basic name="ext2">
+				<column name="EXT2" />
+			</basic>
+			<basic name="ext3">
+				<column name="EXT3" />
+			</basic>
+			<basic name="ext4">
+				<column name="EXT4" />
+			</basic>
+			<transient name="crtName" />
+			<transient name="lastUptName" />
+		</attributes>
+	</entity>
+</entity-mappings>

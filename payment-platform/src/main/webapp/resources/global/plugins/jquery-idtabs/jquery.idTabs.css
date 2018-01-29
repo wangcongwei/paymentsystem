@@ -1,0 +1,45 @@
+.usual
+{
+    padding: 15px 10px 10px 10px;
+}
+.usual li
+{
+    list-style: none;
+    float: left;
+}
+.usual ul a
+{
+    display: block;
+    padding: 6px 10px;
+    text-decoration: none !important;
+    margin: 1px;
+    margin-left: 0;
+    color: #FFF;
+    background: #eee;
+}
+.usual ul a:hover
+{
+font-size: 14px;
+}
+.usual ul a.selected
+{
+    margin-bottom: 0;
+    color: #000;
+    background-color: white;
+    border-bottom: 1px solid #e1e1e1;
+    cursor: default;
+}
+.usual div
+{
+    padding: 10px 10px 8px 10px;
+    padding-top: 3px;
+    margin-top: -15px;
+    clear: left;
+    background-color: white;
+    font: 12px;
+}
+.usual div a
+{
+    color: #000;
+    font-weight: bold;
+}

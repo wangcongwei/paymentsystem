@@ -1,0 +1,129 @@
+﻿<!doctype html>
+<!--[if IE 8]> <html lang="zh-CN" class="ie8 no-js"> <![endif]-->
+<!--[if IE 9]> <html lang="zh-CN" class="ie9 no-js"> <![endif]-->
+<!--[if !IE]><!-->
+<html lang="zh-CN" class="no-js">
+<!--<![endif]-->
+<head>
+    <meta charset="UTF-8">
+    <title>上传的例子</title>
+     
+</head>
+<body >
+  <div class="rightContent fl" ng-controller="controller" nv-file-drop="" uploader="uploader" filters="queueLimit, customFilter">
+    <!--begin condition -->
+    <div class="tdlist portlet-body">
+      <div class="grid_tit">文件上传</div>
+    </div>
+    <form ng-submit="upload()" class="form-horizontal">
+      <div class="inpbox">
+        <table>
+          <tr>
+            <th class="col-md-1 text-right">
+              多文件
+            </th>
+            <td class="col-md-11 text-left">
+              <input type="file" nv-file-select="" uploader="uploader" multiple />
+            </td>
+          </tr>
+          <tr>
+            <th class="col-md-1 text-right">
+              单文件
+            </th>
+            <td class="col-md-11 text-left">
+              <input type="file" nv-file-select="" uploader="uploader" />
+            </td>
+          </tr>
+        </table>
+      </div>
+    </form>
+    <div class="portlet light">
+      <div class="portlet-title">
+        <div class="caption font-green-sharp">
+          <i class="icon-settings font-green-sharp"></i>
+          <span class="caption-subject bold uppercase">待上传文件队列</span>
+          <span class="caption-helper">待上传文件数量: <span ng-bind='uploader.queue.length'></span></span>
+        </div>
+       
+      </div>
+      <div class="portlet-body">
+        <div class="table-scrollable table-scrollable-borderless">
+          <table class="table table-hover table-light">
+            <thead>
+              <tr class="uppercase">
+                <th width="50%">Name</th>
+                <th ng-show="uploader.isHTML5">Size</th>
+                <th>Progress</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr ng-repeat="item in uploader.queue">
+                <td><strong ng-bind="item.file.name"></strong></td>
+                <td ng-show="uploader.isHTML5" nowrap ng-bind="(item.file.size/1024/1024|number:2) + ' MB'"></td>
+                <td>
+                  <div class="progress progress-sm" style="margin-bottom: 0;">
+                    <div class="progress-bar progress-bar-info" role="progressbar" ng-style="{ 'width': item.progress + '%' }"></div>
+                  </div>
+                </td>
+                <td class="text-center">
+                  <span ng-show="item.isSuccess" class="text-success"><i class="glyphicon glyphicon-ok"></i></span>
+                  <span ng-show="item.isCancel" class="text-info"><i class="glyphicon glyphicon-ban-circle"></i></span>
+                  <span ng-show="item.isError" class="text-danger"><i class="glyphicon glyphicon-remove"></i></span>
+                </td>
+                <td nowrap>
+                  <button type="button" class="btn btn-success btn-xs" ng-click="item.upload()" ng-disabled="item.isReady || item.isUploading || item.isSuccess">
+                    <span class="glyphicon glyphicon-upload"></span> Upload
+                  </button>
+                  <button type="button" class="btn btn-warning btn-xs" ng-click="item.cancel()" ng-disabled="!item.isUploading">
+                    <span class="glyphicon glyphicon-ban-circle"></span> Cancel
+                  </button>
+                  <button type="button" class="btn btn-danger btn-xs" ng-click="item.remove()">
+                    <span class="glyphicon glyphicon-trash"></span> Remove
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div>
+          <p>Queue progress:</p>
+          <div class="progress progress-sm" style="">
+            <div class="progress-bar progress-bar-info" role="progressbar" ng-style="{ 'width': uploader.progress + '%' }"></div>
+          </div>
+        </div>
+        <button type="button" class="btn btn-success btn-s" ng-click="uploader.uploadAll()" ng-disabled="!uploader.getNotUploadedItems().length">
+          <span class="glyphicon glyphicon-upload"></span> 开始上传
+        </button>
+        <button type="button" class="btn btn-warning btn-s" ng-click="uploader.cancelAll()" ng-disabled="!uploader.isUploading">
+          <span class="glyphicon glyphicon-ban-circle"></span> 取消
+        </button>
+        <button type="button" class="btn btn-danger btn-s" ng-click="uploader.clearQueue()" ng-disabled="!uploader.queue.length">
+          <span class="glyphicon glyphicon-trash"></span> 清空
+        </button>
+        <pre ng-bind=" ret | json"></pre>
+        
+      </div>
+    </div>
+  </div>
+
+<!--[if lte IE 8]>
+<script type="text/javascript" src="../../resources/global/plugins/json2.js"></script>
+<![endif]-->
+<!--[if lt 9]>
+<script type="text/javascript" src="../../resources/global/plugins/es5-shim.min.js"></script>
+<script type="text/javascript" src="../../resources/global/plugins/es5-sham.min.js"></script>
+<![endif]-->
+<script type="text/javascript" src="../../resources/scripts/sea.js"></script>
+<script type="text/javascript" src="../../resources/scripts/framework/framework-init.js"></script>
+<script>
+    //初始化应用
+    seajs.use(['app-init','scripts/examples/upload/upload'], function (init, index) {
+        init(index);
+    });
+
+</script>
+</body>
+</html>

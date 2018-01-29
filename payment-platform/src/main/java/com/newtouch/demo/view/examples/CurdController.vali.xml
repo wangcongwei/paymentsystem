@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<v:validates xmlns:v="http://www.example.org/Validator/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://www.example.org/Validator/ ">
+    <v:request client-enable="true" int-path="/" method="POST" server-enable="true">
+        <v:field err-msg="商品名称输入错误" max-len="100" min-len="1" name="prodCode" required="true" type="text"/>
+        <v:field err-msg="价格输入错误" max-len="100" min-len="1" name="price1" required="false" type="number"/>
+        <v:field err-msg="价格输入错误" max-len="100" min-len="1" name="price2" required="false" type="number"/>
+    </v:request>
+    <v:request client-enable="true" int-path="/" method="PATCH" server-enable="true">
+        <v:field err-msg="商品代码输入错误" max-len="100" min-len="1" name="prodCode"  required="true" type="text"/>
+        <v:field err-msg="商品名称输入错误" max-len="100" min-len="1" name="prodName" required="true" type="text"/>
+        <v:field err-msg="商品价格输入错误" max-len="100" min-len="1" name="price" required="true" type="number"/>
+    </v:request>
+</v:validates>

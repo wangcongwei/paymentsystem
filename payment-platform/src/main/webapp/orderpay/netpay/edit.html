@@ -1,0 +1,48 @@
+﻿	<div class="rightContent fl">
+		<!--begin condition -->
+		<div class="tdlist portlet-body">	
+			<div class="grid_tit">产品编辑</div>							
+		</div>
+        <form ng-submit="save()" class="form">
+		<div class="inpbox">
+			<table>
+				<tr>
+					<th class="col-md-1 text-right">商品代码：</th>
+					<td class="col-md-5 text-left">
+					 	<div class="input-icon right">
+							<i class="fa fa-check tooltips"></i>
+							 <input type="text"  ng-model="product.content.prodCode" data-type="text" class="form-control">
+						</div>
+					<th class="col-md-1 text-right">商品名称：</th>
+					<td class="col-md-5 text-left">
+                        <div class="input-icon right">
+                            <i class="fa fa-check tooltips"></i>
+                            <input ng-model="product.content.prodName" type="text" data-type="text"  class="form-control"/>
+                        </div>
+                    </td>
+                <tr>
+					<th class="col-md-1 text-right">价格：</th>
+					<td class="col-md-5 text-left">
+						<div class="input-icon right">
+							<i class="fa fa-check tooltips"></i>
+							<input ng-model="product.content.price" type="text" data-type="number"  ng-valid="retValue.validateErrs['price.a23']"   class="form-control"/>
+						 </div>
+					</td>
+					<th class="col-md-1 text-right"></th>
+					<td class="col-md-5 text-left"></td>
+				</tr>
+				<tr>
+					<td colspan="4" >
+						<div class="col-md-12 text-center">
+							<button type="submit" class="btn green">提交</button>
+							<button type="reset" class="btn default">取消</button>
+						</div>
+					</td>
+				</tr>
+			</table>
+		</div>
+		</form>
+		<pre ng-bind="retValue | json"></pre>
+		<pre ng-bind="retValue.validateErrs['price.a23']"></pre>
+    </div>
+

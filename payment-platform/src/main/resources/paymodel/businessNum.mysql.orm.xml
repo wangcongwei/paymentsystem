@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-mappings xmlns="http://java.sun.com/xml/ns/persistence/orm"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd"
+	version="2.0">
+	<package>com.newtouch.payment.model</package>
+	<access>PROPERTY</access>
+	<!-- DEMO -->
+	<entity class="BusinessNum">
+		<table name="T_BUSINESS_NUM" />
+		<attributes>
+			<id name="id">
+				<column name="ID" />
+				<generated-value strategy="IDENTITY" />
+			</id>
+			<basic name="busNum">
+				<column name="BUS_NUM" />
+			</basic>
+			<basic name="payChannel">
+				<column name="PAY_CHANNEL" />
+			</basic>
+			<basic name="payAccoutn">
+				<column name="PAY_ACCOUTN" />
+			</basic>
+			<transient name="crtName" />
+			<transient name="lastUptName" />
+		</attributes>
+	</entity>
+</entity-mappings>

@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context" xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd
+       http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+	<!-- 自动扫描的包名 -->
+	<context:component-scan base-package="com.newtouch.demo.view,com.newtouch.common.view,com.newtouch.payment.view">
+		<context:include-filter type="annotation" expression="org.springframework.stereotype.Controller" />
+	</context:component-scan>
+
+	<!-- 对静态资源文件的访问 -->
+	<mvc:resources mapping="/**/*.html" location="/" order="0" />
+	<mvc:resources mapping="/resources/**" location="/resources/" />
+
+	<mvc:annotation-driven conversion-service="conversionService">
+		<mvc:message-converters>
+			<bean class="org.springframework.http.converter.StringHttpMessageConverter" />
+			<bean class="org.springframework.http.converter.BufferedImageHttpMessageConverter" />
+			<bean class="org.springframework.http.converter.ByteArrayHttpMessageConverter" />
+			<bean class="org.springframework.http.converter.StringHttpMessageConverter" />
+			<bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+				<property name="supportedMediaTypes">
+					<list>
+						<value>application/json;charset=UTF-8</value>
+					</list>
+				</property>
+				<property name="objectMapper" ref="jodaMapper" />
+			</bean>
+		</mvc:message-converters>
+	</mvc:annotation-driven>
+
+	<bean class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
+		<property name="defaultViews">
+			<list>
+				<bean class="org.springframework.web.servlet.view.json.MappingJackson2JsonView">
+					<property name="objectMapper" ref="jodaMapper" />
+				</bean>
+			</list>
+		</property>
+	</bean>
+
+	<!--异常拦截器 -->
+	<bean class="com.newtouch.common.view.ExceptionResolver" />
+
+	<!--json 日期序列化，反序列化 -->
+	<bean id="jodaMapper" class="com.fasterxml.jackson.datatype.joda.JodaMapper">
+		<property name="writeDatesAsTimestamps" value="false" />
+		<property name="dateFormat">
+			<bean class="java.text.SimpleDateFormat">
+				<constructor-arg index="0" value="yyyy-MM-dd HH:mm:ss" />
+			</bean>
+		</property>
+	</bean>
+
+	<!--格式转换器 -->
+	<bean id="conversionService" class="org.springframework.format.support.FormattingConversionServiceFactoryBean">
+		<property name="registerDefaultFormatters" value="false" />
+		<property name="formatters">
+			<set>
+				<bean class="org.springframework.format.number.NumberFormatAnnotationFormatterFactory" />
+			</set>
+		</property>
+		<property name="formatterRegistrars">
+			<set>
+				<bean class="org.springframework.format.datetime.joda.JodaTimeFormatterRegistrar">
+					<property name="dateFormatter">
+						<bean class="org.springframework.format.datetime.joda.DateTimeFormatterFactoryBean">
+							<property name="pattern" value="yyyy-MM-dd" />
+						</bean>
+					</property>
+					<property name="dateTimeFormatter">
+						<bean class="org.springframework.format.datetime.joda.DateTimeFormatterFactoryBean">
+							<property name="pattern" value="yyyy-MM-dd HH:mm:ss" />
+						</bean>
+					</property>
+					<property name="timeFormatter">
+						<bean class="org.springframework.format.datetime.joda.DateTimeFormatterFactoryBean">
+							<property name="pattern" value="HH:mm:ss" />
+						</bean>
+					</property>
+				</bean>
+			</set>
+		</property>
+	</bean>
+
+	<aop:aspectj-autoproxy />
+	<bean class="com.newtouch.common.view.validation.ValidateExecute">
+		<property name="validationService" ref="validationService" />
+	</bean>
+
+	<bean id="multipartResolver" class="com.newtouch.common.view.CustomCommonsMultipartResolver">
+		<property name="defaultEncoding" value="utf-8"></property>
+		<property name="maxUploadSize" value="10485760000"></property>
+		<property name="maxInMemorySize" value="40960"></property>
+		<property name="useProgress" value="false"></property>
+	</bean>
+
+	<bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
+		<property name="basename" value="message.common-messages" />
+		<property name="useCodeAsDefaultMessage" value="true" />
+	</bean>
+</beans>

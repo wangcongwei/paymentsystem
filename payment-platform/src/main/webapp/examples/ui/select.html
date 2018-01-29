@@ -1,0 +1,24 @@
+<div style="margin-top:50px;width:40%">
+
+<select chosen
+        allow-single-deselect="true"
+        data-placeholder="请选择..."
+        no-results-text="没有数据"
+        ng-model="data.selectSimpleValue"
+        ng-options="m.id as m.name for m in listData"
+        ng-type="text" /*width="180px" -- 不设置宽度缺省width="100%"*/>
+</select>
+
+<br/>
+<br/>
+<br/>
+<select chosen
+        data-placeholder="请选择..."
+        no-results-text="没有数据"
+        ng-model="data.selectArrayValue"
+        ng-options="m.id as m.name for m in listData"
+        multiple
+        ng-type="text" 
+</select>
+	
+</div>

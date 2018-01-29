@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-mappings xmlns="http://java.sun.com/xml/ns/persistence/orm"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd"
+	version="2.0">
+	<package>com.newtouch.payment.model</package>
+	<access>PROPERTY</access>
+	<!-- DEMO -->
+	<entity class="OrderPayRequest">
+		<table name="T_ORDER_PAY_REQUEST" />
+		<attributes>
+			<id name="id">
+				<column name="ID" />
+				<generated-value strategy="IDENTITY" />
+			</id>
+			<basic name="amount">
+				<column name="AMOUNT" />
+			</basic>
+			<basic name="orderNo">
+				<column name="ORDER_NO" />
+			</basic>
+			<basic name="creatTime">
+				<column name="CREATE_TIME" />
+			</basic>
+			<basic name="updateTime">
+				<column name="UPDATE_TIME" />
+			</basic>
+			<basic name="payRequestStatus">
+				<column name="PAY_REQUEST_STATUS" />
+			</basic>
+			<basic name="busNum">
+				<column name="BUS_NUM" />
+			</basic>
+			<basic name="paySeriNo">
+				<column name="PAY_SERINO" />
+			</basic>
+			<basic name="userName">
+				<column name="USER_NAME" />
+			</basic>
+			<basic name="userCerType">
+				<column name="USER_CERTYPE" />
+			</basic>
+			<basic name="userCerNum">
+				<column name="USER_CERNUM" />
+			</basic>
+			<basic name="userAccount">
+				<column name="USER_ACCOUNT" />
+			</basic>
+			<basic name="userMobile">
+				<column name="USER_MOBILE" />
+			</basic>
+			<basic name="smsCode">
+				<column name="sms_Code" />
+			</basic>
+			<basic name="ext1">
+				<column name="EXT1" />
+			</basic>
+			<basic name="ext2">
+				<column name="EXT2" />
+			</basic>
+			<basic name="ext3">
+				<column name="EXT3" />
+			</basic>
+			<basic name="ext4">
+				<column name="EXT4" />
+			</basic>
+			<transient name="crtName" />
+			<transient name="lastUptName" />
+		</attributes>
+	</entity>
+</entity-mappings>

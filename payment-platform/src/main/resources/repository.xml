@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="
+	http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd 
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd
+	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.2.xsd
+	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.2.xsd">
+
+	<bean class="com.newtouch.common.repository.impl.ScanRepositoryInterfaceImpl" init-method="init">
+		<property name="entityManager" ref="entityManager" />
+		<property name="classToScan">
+			<value>
+				com.newtouch.common.repository.ConfigRepository,
+				com.newtouch.common.repository.CodeRepository,
+				com.newtouch.common.repository.CommonRepository,
+				
+				com.newtouch.payment.repository.BusinessNumRepo,				
+				com.newtouch.payment.repository.OrderPayRequestRepo,
+				com.newtouch.payment.repository.OrderRepo,
+				com.newtouch.payment.repository.PayPlatformTransactionRepo,
+				com.newtouch.payment.repository.CompensationRecordRepo,
+				com.newtouch.demo.repository.OrderItemRepo,
+				com.newtouch.demo.repository.CurdRepo
+			</value>
+		</property>
+	</bean>
+	<!-- Jpa 事务配置 --> 
+	<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+		<property name="entityManagerFactory" ref="entityManagerFactory" />
+	</bean>
+
+	<bean id="entityManager" class="org.springframework.orm.jpa.support.SharedEntityManagerBean">
+		<property name="entityManagerFactory" ref="entityManagerFactory" />
+	</bean>
+
+	<tx:advice id="txAdvice" transaction-manager="transactionManager">
+		<tx:attributes>
+			<tx:method name="add*" propagation="REQUIRED" />
+			<tx:method name="save*" propagation="REQUIRED" />
+			<tx:method name="insert*" propagation="REQUIRED" />
+			<tx:method name="del*" propagation="REQUIRED" />
+			<tx:method name="update*" propagation="REQUIRED" />
+			<tx:method name="doPay" propagation="REQUIRED" />
+			<tx:method name="doQuick*" propagation="REQUIRED" />
+			<tx:method name="ido*"    propagation="REQUIRES_NEW" />
+		</tx:attributes>
+	</tx:advice>
+
+	<aop:config>
+		<aop:advisor advice-ref="txAdvice" pointcut="execution(* com.newtouch.payment.service.impl.*Impl.*(..))" />
+		<aop:advisor advice-ref="txAdvice" pointcut="execution(* com.newtouch.demo.service.impl.*Impl.*(..))" />
+	</aop:config>
+
+	<!-- JPA设定 -->
+	<bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="packagesToScan" value="com.newtouch.payment.model,com.newtouch.demo.model" />
+		<property name="mappingResources">
+			<list>
+				<value>model/app-core.mysql.orm.xml</value>
+				<value>paymodel/businessNum.mysql.orm.xml</value>
+				<value>paymodel/order.mysql.orm.xml</value>
+				<value>paymodel/orderpayrequest.mysql.orm.xml</value>
+				<value>paymodel/tpayplatformtransaction.mysql.orm.xml</value>
+				<value>paymodel/compensationRecord.mysql.orm.xml</value>
+			</list>
+		</property>
+		<property name="persistenceProvider" ref="persistenceProvider" />
+		<property name="jpaVendorAdapter" ref="hibernateJpaVendorAdapter" />
+		<property name="jpaDialect" ref="jpaDialect" />
+		<property name="jpaProperties">
+			<props>
+				<!-- 命名规则 My_NAME->MyName -->
+				<prop key="hibernate.ejb.naming_strategy">org.hibernate.cfg.ImprovedNamingStrategy</prop>
+				<!-- 日志系统debug级别下将打印所有生成的SQL -->
+				<prop key="hibernate.show_sql">true</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean id="persistenceProvider" class="org.hibernate.ejb.HibernatePersistence" />
+	
+	<bean id="hibernateJpaVendorAdapter" class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+		<property name="generateDdl" value="false" />
+		<property name="database" value="MYSQL" />
+	</bean>
+	<bean id="jpaDialect" class="org.springframework.orm.jpa.vendor.HibernateJpaDialect" />
+
+	<!-- jdbc template for procedure -->
+	<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+		<constructor-arg ref="dataSource"></constructor-arg>
+	</bean>
+</beans>

@@ -1,0 +1,89 @@
+	<div class="rightContent fl">
+		<!--begin condition -->
+		<div class="tdlist portlet-body">	
+			<div class="grid_tit">产品查询</div>							
+		</div>
+		<form ng-submit="flushGrid()" class="form-horizontal">
+			<div class="inpbox">
+			<table>
+                <tr>
+                	<th class="col-md-1 text-right">订单起期：</th>
+					<td class="col-md-5 text-left"><input ng-model="queryData.createTime" type="text" ng-type="Date" class="form-control form_date" data-date-startdate="2010-01-01" data-date-enddate="2099-12-31"/></td>
+					<th class="col-md-1 text-right">订单止期：</th>
+					<td class="col-md-5 text-left"><input ng-model="queryData.endTime" type="text" ng-type="Date" class="form-control form_date" data-date-startdate="2010-01-01" data-date-enddate="2099-12-31"/></td>
+				</tr>
+				<tr>
+                	<th class="col-md-1 text-right">订单支付号：</th>
+                	<td class="col-md-5 text-left"><input ng-model="queryData.orderNo" type="text" ng-type="String"  class="form-control"/></td>
+                	<th class="col-md-1 text-right">商户号：</th>
+                	<td class="col-md-5 text-left"><input ng-model="queryData.busNum" type="text" ng-type="String"  class="form-control"/></td>
+                </tr>
+                <tr>
+                <th class="col-md-1 text-right">订单状态：</th>
+                	<td class="col-md-5 text-left"><input ng-model="queryData.orderStatus" type="text" ng-type="String"  class="form-control"/></td>
+                	
+                	<th></th>
+                	<td class="col-md-5 text-center"><button type="submit" class="btn purple"><i class="fa fa-check"></i>查询</button></td>
+                </tr>
+			</table>
+	        </div>
+	    </form>
+
+		<!-- begin page -->
+		<div class="tdlist portlet-body">								
+			<div class="grid_tit">订单数据</div>
+		 	<div class="portlet-body" >
+		        <table class="table  table-hover blue ">
+		            <thead>
+		            <tr>
+		                <th>
+		                    <intput icheck group="g" ng-model="checked" />
+		                </th>
+		                <th class="col-md-1 text-center">ID</th>
+		                <th class="col-md-1 text-center">商户订单号</th>
+		                <th class="col-md-2 text-center">订单摘要</th>
+		                <th class="col-md-1 text-center">订单金额</th>
+		                <th class="col-md-1 text-center">订单支付号</th>
+		                <th class="col-md-1 text-center">订单创建时间</th>
+		                <th class="col-md-1 text-center">订单失效时间</th>
+		                <th class="col-md-1 text-center">商户号</th>
+		                <th class="col-md-1 text-center">订单状态</th>
+		                <th class="col-md-1 text-center">查看</th>
+		            </tr>
+		            </thead>
+		            <tbody>
+			            <tr ng-repeat="item in data.content.content">
+			                <td class="text-center">
+		                        <input icheck group-by="g" name="g" ng-value='item.id' />
+			                </td>
+			                <td class="text-center text-nowrap" ng-bind="item.id"></td>
+			                <td class="text-center text-nowrap" ng-bind="item.busOrderNo"></td>
+			                <td class="text-center text-nowrap" ng-bind="item.busDetail"></td>
+			                <td class="text-center text-nowrap" ng-bind="item.amount"></td>
+			                <td class="text-center text-nowrap" ng-bind="item.orderNo"></td>
+			                <td class="text-center text-nowrap" ng-bind="item.creatTime"></td>
+			                <td class="text-center text-nowrap" ng-bind="item.outTime"></td>
+			                <td class="text-center text-nowrap" ng-bind="item.busNum"></td>
+			                <td class="text-center text-nowrap" ng-bind="item.orderStatus"></td>
+			                <td class="text-center text-nowrap"><a href="#/detail/{{item.id}}">查看</a></td>
+			            </tr>
+		            </tbody>
+		        </table>
+		        <nav>
+		            <ul class="ng-hide pagination" ng-show="pagingBar.inited">
+		                <li>
+		                    <span ng-click="pagingBar.first()">首 页</span>
+		                </li>
+		                <li><span ng-click="pagingBar.prev()">上一页</span></li>
+		                <li><span ng-click="pagingBar.prevWindow()" aria-hidden="true">&laquo;</span></li>
+		                <li ng-class="{'active': queryData.pageIndex==item}" ng-repeat="item in pagingBar.numbers" ><span ng-click="pagingBar.go(item)" >{{item}}</span></li>
+		                <li><span ng-click="pagingBar.nextWindow()" aria-hidden="true">&raquo;</span></li>
+		                <li><span ng-click="pagingBar.next()">下一页</span></li>
+		                <li><span ng-click="pagingBar.last()">末页</span></li>
+		                <li><span style="padding-top:3px;padding-bottom:3px;">跳转到 <input type="number" style="width:30px;" ng-model="queryData.pageIndex" ng-change="flushGrid()"/> 页</span></li>
+		            </ul>
+		        </nav>
+    		</div>
+		</div>
+	</div>
+<pre ng-bind="checked|json"></pre>

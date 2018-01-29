@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-mappings xmlns="http://java.sun.com/xml/ns/persistence/orm"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd"
+	version="2.0">
+	<package>com.newtouch.payment.model</package>
+	<access>PROPERTY</access>
+	<!-- DEMO -->
+	<entity class="TPayPlatformTransation">
+		<table name="T_PAY_PLATFORM_TRANSACTION" />
+		<attributes>
+			<id name="id">
+				<column name="ID" />
+				<generated-value strategy="IDENTITY" />
+			</id>
+			<basic name="createDate">
+				<column name="CREATE_DATE" />
+			</basic>
+			<basic name="userTransactionNo">
+				<column name="USER_TRANSACTION_NO" />
+			</basic>
+			<basic name="reqNo">
+				<column name="REQNO" />
+			</basic>
+			<basic name="resNo">
+				<column name="RESNO" />
+			</basic>
+			<basic name="orderNo">
+				<column name="ORDER_NO" />
+			</basic>
+			<basic name="checkNo">
+				<column name="CHECK_NO" />
+			</basic>
+			<basic name="amount">
+				<column name="AMOUNT" />
+			</basic>
+			<basic name="payAmount">
+				<column name="PAYAMOUNT" />
+			</basic>
+			<basic name="currency">
+				<column name="CURRENCY" />
+			</basic>
+			<basic name="status">
+				<column name="STATUS" />
+			</basic>
+			<basic name="source">
+				<column name="SOURCE" />
+			</basic>
+			<basic name="payerCode">
+				<column name="PAYER_CODE" />
+			</basic>
+			<basic name="payType">
+				<column name="PAY_TYPE" />
+			</basic>
+			<basic name="payTime">
+				<column name="PAY_TIME" />
+			</basic>
+			<basic name="returnTime">
+				<column name="RETURN_TIME" />
+			</basic>
+			<basic name="paysuccessTime">
+				<column name="PAYSUCCESS_TIME" />
+			</basic>
+			<basic name="subMerchantId">
+				<column name="SUB_MERCHANT_ID" />
+			</basic>
+			<basic name="accountno">
+				<column name="ACCOUNT_NO" />
+			</basic>
+			<basic name="accountName">
+				<column name="ACCOUNT_NAME" />
+			</basic>
+			<basic name="validdate">
+				<column name="VALIDDATE" />
+			</basic>
+			<basic name="ccv2">
+				<column name="CCV2" />
+			</basic>
+			<basic name="idType">
+				<column name="ID_TYPE" />
+			</basic>
+			<basic name="idNo">
+				<column name="ID_NO" />
+			</basic>
+			<basic name="storableCardNo">
+				<column name="STORABLECARDNO" />
+			</basic>
+			<basic name="cardOrg">
+				<column name="CARDORG" />
+			</basic>
+			<basic name="issuer">
+				<column name="ISSUER" />
+			</basic>
+			<basic name="mobile">
+				<column name="MOBILE" />
+			</basic>
+			<basic name="verifycode">
+				<column name="VERIFYCODE" />
+			</basic>
+			<basic name="token">
+				<column name="TOKEN" />
+			</basic>
+			<basic name="messagecode">
+				<column name="MESSAGECODE" />
+			</basic>
+			<basic name="message">
+				<column name="MESSAGE" />
+			</basic>
+			<basic name="enable_time">
+				<column name="ENABLE_TIME" />
+			</basic>
+			<basic name="query_time">
+				<column name="QUERY_TIME" />
+			</basic>
+			<basic name="query_times">
+				<column name="QUERY_TIMES" />
+			</basic>
+		</attributes>
+	</entity>
+</entity-mappings>

@@ -1,0 +1,68 @@
+<p style="margin-top:50px;width:40%">级联选中 checkbox </p>
+<table class="table  table-hover blue" style="width:40%">
+    <thead>
+    <tr>
+        <th>
+            <input icheck group="g1" ng-model="selectArrayValue1" />
+        </th>
+        <th class="col-md-4 text-center">保单号</th>
+        <th class="col-md-4 text-center">险种</th>
+        <th class="col-md-4 text-center">主附险</th>
+    </tr>
+    </thead>
+    <tbody>
+        <tr ng-repeat="item in listData">
+            <td class="text-center">
+                <input icheck ng-value='item' ng-click="clickEvent(item,$event)" click-before="true" group-by="g1" policy-no="{{item.policyNo}}"/>
+            </td>
+            <td class="text-center text-nowrap" ng-bind="item.policyNo"></td>
+            <td class="text-center text-nowrap" ng-bind="item.name"></td>
+            <td class="text-center text-nowrap" ng-bind="item.type"></td>
+        </tr>
+    </tbody>
+</table>
+<pre ng-bind="selectArrayValue1|json"></pre>
+
+<p style="margin-top:50px;width:40%">多级复合选中 checkbox </p>
+<table class="table  table-hover blue" style=";width:40%">
+    <thead>
+    <tr>
+        <th></th>
+        <th class="col-md-4 text-center">保单号</th>
+        <th class="col-md-4 text-center">险种</th>
+        <th class="col-md-4 text-center">主附险</th>
+    </tr>
+    </thead>
+    <tbody ng-repeat="item in listData">
+        <tr>
+            <td class="text-center"></td>
+            <td class="text-center text-nowrap" ng-bind="item.policyNo"></td>
+            <td class="text-center text-nowrap" ng-bind="item.name"></td>
+            <td class="text-center text-nowrap" ng-bind="item.type"></td>
+        </tr>
+        <tr>
+        	<td colspan="4">
+        		<table class="table  table-hover blue" >
+				    <thead>
+				    <tr>
+				        <th class="col-md-1" >
+				           <input icheck group="g2" ng-model="$parent.selectArrayValue2"/>
+				        </th>
+				        <th class="text-left">配送类型</th>
+				    </tr>
+				    </thead>
+				    <tbody>
+				        <tr ng-repeat="chirdItem in item.sendType">
+				            <td  class="col-md-1">
+				                <input icheck ng-value="{{[chirdItem,item]}}" group-by="g2"/>
+				            </td>
+				            <td class="text-left text-nowrap" ng-bind="chirdItem.name"></td>
+				        </tr>
+				    </tbody>
+				</table>
+			</td>
+        </tr>
+    </tbody>
+</table>
+
+<pre ng-bind="selectArrayValue2|json"></pre>

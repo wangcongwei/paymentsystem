@@ -1,0 +1,144 @@
+﻿<!doctype html>
+<!--[if IE 8]> <html lang="zh-CN" class="ie8 no-js"> <![endif]-->
+<!--[if IE 9]> <html lang="zh-CN" class="ie9 no-js"> <![endif]-->
+<!--[if !IE]><!-->
+<html lang="zh-CN" class="no-js">
+<!--<![endif]-->
+<head>
+    <meta charset="UTF-8">
+    <title ng-bind="title"></title>
+</head>
+<body ng-controller="controller">
+    <!-- BEGIN PAGE CONTENT INNER -->
+
+    <div class="row">
+        <div class="col-md-12 col-sm-12">
+            <!-- BEGIN PORTLET-->
+            <!-- BEGIN PAGE CONTENT INNER -->
+            <div class="portlet box blue-madison">
+                <div class="portlet-title">
+                    <div class="caption">
+                        <i class="fa fa-gift"></i>Excel
+                    </div>
+                    <div class="tools">
+                        <a href="javascript:;" class="collapse" data-original-title="" title="">
+                        </a>
+                        <a href="#portlet-config" data-toggle="modal" class="config" data-original-title="" title="">
+                        </a>
+                        <a href="javascript:;" class="remove" data-original-title="" title="">
+                        </a>
+                        <a href="new/add">
+                            添加
+                        </a>
+                    </div>
+                </div>
+                <div class="portlet-body form">
+                    <form ng-submit="flushGrid()">
+                        <div class="row">
+                            <div class="col-md-12  margin-top-10">
+                                <div class="form-group text-right">
+                                    <label class="col-md-2 control-label"><span>*</span> Excel文件：</label>
+                                    <div class="col-md-10">
+                                        <div class="input-icon right">
+                                            <i class="fa tooltips"></i>
+                                            <select ng-model="queryData.excelFileName" ng-type="string" class="select2me  form-control">
+                                                <option value="1433163217916.xls">1433163217916.xls</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row  margin-top-10">
+                            <div class="col-md-6">
+                                <div class="form-group text-right">
+                                    <button type="submit" class="btn purple"><i class="fa fa-check"></i>查看</button>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <button type="button" class="btn purple" onclick="window.open('export')"><i class="fa fa-check"></i>导出</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="portlet box blue-madison">
+                <div class="portlet-title">
+                    <div class="caption">
+                        <i class="fa fa-comments"></i>Excel数据
+                    </div>
+                    <div class="tools">
+                        <a href="javascript:;" class="collapse" data-original-title="" title="">
+                        </a>
+                        <a href="#portlet-config" data-toggle="modal" class="config" data-original-title="" title="">
+                        </a>
+                        <a href="javascript:;" class="reload" data-original-title="" title="">
+                        </a>
+                        <a href="javascript:;" class="remove" data-original-title="" title="">
+                        </a>
+                    </div>
+                </div>
+                <div class="portlet-body">
+                    <div id="grid" class="col-md12 grid">
+                        <table class="table table-bordered table-hover blue dataTable">
+                            <thead>
+                                <tr>
+                                    <th class="col-md-1 text-center" ng-bind="data.content.title.cell0"></th>
+                                    <th class="col-md-1 text-center" ng-bind="data.content.title.cell1"></th>
+                                    <th class="col-md-2 text-center" ng-bind="data.content.title.cell2"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="item in data.content.page.content">
+                                    <td class="text-center text-nowrap" ng-bind="item.cell0"></td>
+                                    <td class="text-center text-nowrap" ng-bind="item.cell1"></td>
+                                    <td class="text-center text-nowrap" ng-bind="item.cell2"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <nav>
+                            <ul class="ng-hide pagination" ng-show="pagingBar.inited">
+                                <li>
+                                    <span ng-click="pagingBar.first()">首 页</span>
+                                </li>
+                                <li><span ng-click="pagingBar.prev()">上一页</span></li>
+                                <li><span ng-click="pagingBar.prevWindow()" aria-hidden="true">&laquo;</span></li>
+                                <li ng-class="{'active': queryData.pageIndex==item}" ng-repeat="item in pagingBar.numbers"><span ng-click="pagingBar.go(item)">{{item}}</span></li>
+                                <li><span ng-click="pagingBar.nextWindow()" aria-hidden="true">&raquo;</span></li>
+                                <li><span ng-click="pagingBar.next()">下一页</span></li>
+                                <li><span ng-click="pagingBar.last()">末页</span></li>
+                                <li><span style="padding-top:3px;padding-bottom:3px;">跳转到 <input type="number" style="width:30px;" ng-model="queryData.pageIndex" ng-change="flushGrid()" /> 页</span></li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            <!-- END  PAGE CONTENT INNER-->
+            <!-- END PORTLET-->
+        </div>
+
+    </div>
+<pre ng-bind="queryData | json"></pre>
+    <!--[if lte IE 8]>
+    <script type="text/javascript" src="../../resources/global/plugins/json2.js"></script>
+    <![endif]-->
+	<!--[if lt IE 9]>
+	<script type="text/javascript" src="../../resources/global/plugins/es5-shim.min.js"></script>
+	<script type="text/javascript" src="../../resources/global/plugins/es5-sham.min.js"></script>
+	<![endif]-->
+
+    <script type="text/javascript" src="../../resources/scripts/sea.js"></script>
+    <script type="text/javascript" src="../../resources/scripts/framework/framework-init.js"></script>
+    <script type="text/javascript">
+        //初始化应用
+        seajs.use(['app-init', 'scripts/examples/excel/excel'], function (init, index) {
+            init(index);
+        });
+    </script>
+
+</body>
+</html>

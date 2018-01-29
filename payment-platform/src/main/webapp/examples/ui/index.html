@@ -1,0 +1,40 @@
+﻿<!doctype html>
+<!--[if IE 8]> <html lang="en" class="ie8 no-js"> <![endif]-->
+<!--[if IE 9]> <html lang="en" class="ie9 no-js"> <![endif]-->
+<!--[if !IE]><!-->
+<html lang="en" class="no-js">
+<!--<![endif]-->
+<head>
+    <meta charset="UTF-8">
+    <title>用户UI组件演示集合</title>
+</head>
+<body style="background-color:#fff">
+<p style="font-size:12pt;margin:15px">
+<a href="#dialog" style="padding:10px;">dialog</a>
+|<a href="#tree" style="padding:10px;">tree</a>
+|<a href="#select" style="padding:10px;">select(chosen)</a>
+|<a href="#checkbox" style="padding:10px;">checkbox(icheck)</a>
+|<a href="#radio" style="padding:10px;">radio(iradio)</a>
+</p>
+<hr/>
+<div ng-view></div>
+
+<!--[if lte IE 8]>
+<script type="text/javascript" src="../../resources/global/plugins/json2.js"></script>
+<![endif]-->
+<!--[if lt IE 9]>
+<script type="text/javascript" src="../../resources/global/plugins/es5-shim.min.js"></script>
+<script type="text/javascript" src="../../resources/global/plugins/es5-sham.min.js"></script>
+<![endif]-->
+
+<script type="text/javascript" src="../../resources/scripts/sea.js"></script>
+<script type="text/javascript" src="../../resources/scripts/framework/framework-init.js"></script>
+<script>
+    //初始化应用
+    seajs.use(['app-init','scripts/examples/ui/ui'], function (init, index) {
+        init(index);
+    });
+
+</script>
+</body>
+</html>

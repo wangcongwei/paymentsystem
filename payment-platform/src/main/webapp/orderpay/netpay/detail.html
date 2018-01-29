@@ -1,0 +1,28 @@
+<!-- begin page -->
+<div class="portlet-body">								
+	<div class="grid_tit">产品详情</div>
+ 	<div class="portlet-body">
+		<table class="table table-bordered blue ">
+            <tbody>
+            <tr>
+                <th class="col-md-1 text-right">ID</th>
+                <td ng-bind="product.content.id"></td>
+                <th class="col-md-1 text-right">商品条码</th>
+                <td ng-bind="product.content.prodCode"></td>
+            </tr>
+            <tr>
+                <th class="col-md-1 text-right">商品名称</th>
+                <td ng-bind="product.content.prodName"></td>
+                <th class="col-md-1 text-right">价格</th>
+                <td ng-bind="product.content.price | currency:'RMB ￥'"></td>
+            </tr>
+            <tr>
+                <th class="col-md-2 text-right">创建时间</th>
+                <td ng-bind="product.content.crtDttm"></td>
+                <th class="col-md-2 text-right">更新时间</th>
+                <td ng-bind="product.content.lastuptDttm"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
