@@ -20,68 +20,128 @@ public class Payment extends BaseEntity {
 	 */
 	private static final long serialVersionUID = 2938386021890499835L;
 	@Id
-	@SequenceGenerator(name = "SEQ_T_PAYMENT_ID", sequenceName = "SEQ_T_PAYMENT_ID", allocationSize = 1)
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_T_PAYMENT_ID")
+//	@SequenceGenerator(name = "SEQ_T_PAYMENT_ID", sequenceName = "SEQ_T_PAYMENT_ID", allocationSize = 1)
+//	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_T_PAYMENT_ID")
 	@Column(name = "ID", nullable = false)
 	private Long id;
 	
+	/**
+	 * 创建时间
+	 */
 	@Column(name = "CREATE_DATE")
 	private Date createDate;
 	
+	/**
+	 * 支付状态
+	 */
 	@Column(name = "PAYMENT_STATUS")
 	private String paymentStatus;
 	
+	/**
+	 * 支付号
+	 */
 	@Column(name = "PAYMENT_NO")
 	private String paymentNo;
 	
+	/**
+	 * 验证码
+	 */
 	@Column(name = "CHECK_NO")
 	private String checkNo;
 	
+	/**
+	 * 支付流水
+	 */
 	@Column(name = "DEAL_NO")
 	private String dealNo;
 	
+	/**
+	 * 支付时间
+	 */
 	@Column(name = "PAY_TIME")
 	private Date payTime;
 	
+	/**
+	 * 支付金额
+	 */
 	@Column(name = "PAY_AMOUNT")
 	private Double payAmount;
 	
+	/**
+	 * 支付号金额
+	 */
 	@Column(name = "PAYMENT_AMOUNT")
 	private Double paymentAmount;
 	
+	/**
+	 * 支付方式
+	 */
 	@Column(name = "PAY_TYPE")
 	private String payType;
 	
+	/**
+	 * 支付方
+	 */
 	@Column(name = "PLATFORM")
 	private String platform;
 	
+	/**
+	 * 渠道代码
+	 */
 	@Column(name = "COM_CODE")
 	private String comCode;
 	
+	/**
+	 * 支付有效期开始时间
+	 */
 	@Column(name = "PAY_EFF_START")
 	private Date payEffStart;
 	
+	/**
+	 * 支付有效期结束时间
+	 */
 	@Column(name = "PAY_EFF_END")
 	private Date payEffEnd;
 	
+	/**
+	 * 币种
+	 */
 	@Column(name = "CURRENCY")
 	private String currency;
 	
+	/**
+	 * 商户号
+	 */
 	@Column(name = "MERCHANT_NO")
 	private String merchantNo;
 	
+	/**
+	 * 终端号
+	 */
 	@Column(name = "TERMINAL_NO")
 	private String terminalNo;
 	
+	/**
+	 * 卡号
+	 */
 	@Column(name = "CARD_NO")
 	private String cardNo;
 	
+	/**
+	 * 请求流水
+	 */
 	@Column(name = "REQ_NO")
 	private String reqNo;
 	
+	/**
+	 * 是否有效
+	 */
 	@Column(name = "ISVALID")
 	private String isvalid;
 	
+	/**
+	 * 更新时间
+	 */
 	@Column(name = "UPDATE_TIME")
 	private String updateTime;
 

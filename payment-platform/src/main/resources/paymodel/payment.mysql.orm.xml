@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-mappings xmlns="http://java.sun.com/xml/ns/persistence/orm"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd"
+	version="2.0">
+	<package>com.newtouch.payment.model</package>
+	<access>PROPERTY</access>
+	<!-- DEMO -->
+	<entity class="Payment">
+		<table name="T_PAYMENT" />
+		<attributes>
+			<id name="id">
+				<column name="ID"  unique="true" nullable="false"/>
+				<generated-value strategy="IDENTITY" />
+			</id>
+			<basic name="createDate">
+				<column name="CREATE_DATE" />
+			</basic>
+			<basic name="paymentStatus">
+				<column name="PAYMENT_STATUS" />
+			</basic>
+			<basic name="paymentNo">
+				<column name="PAYMENT_NO" />
+			</basic>
+			<basic name="checkNo">
+				<column name="CHECK_NO" />
+			</basic>
+			<basic name="dealNo">
+				<column name="DEAL_NO" />
+			</basic>
+			<basic name="payTime">
+				<column name="PAY_TIME" />
+			</basic>
+			<basic name="payAmount">
+				<column name="PAY_AMOUNT" />
+			</basic>
+			<basic name="paymentAmount">
+				<column name="PAYMENT_AMOUNT" />
+			</basic>
+			<basic name="payType">
+				<column name="PAY_TYPE" />
+			</basic>
+			<basic name="platform">
+				<column name="PLATFORM" />
+			</basic>
+			<basic name="comCode">
+				<column name="COM_CODE" />
+			</basic>
+			<basic name="payEffStart">
+				<column name="PAY_EFF_START" />
+			</basic>
+			<basic name="payEffEnd">
+				<column name="PAY_EFF_END" />
+			</basic>
+			<basic name="currency">
+				<column name="CURRENCY" />
+			</basic>
+			<basic name="merchantNo">
+				<column name="MERCHANT_NO" />
+			</basic>
+			<basic name="terminalNo">
+				<column name="TERMINAL_NO" />
+			</basic>
+			<basic name="cardNo">
+				<column name="CARD_NO" />
+			</basic>
+			<basic name="reqNo">
+				<column name="REQ_NO" />
+			</basic>
+			<basic name="isValid">
+				<column name="ISVALID" />
+			</basic>
+			<basic name="updateTime">
+				<column name="UPDATE_TIME" />
+			</basic>
+		</attributes>
+	</entity>
+	<entity class="ApplyDetails">
+		<table name="T_APPLY_DETAILS" />
+		<attributes>
+			<id name="id">
+				<column name="ID" unique="true" nullable="false"/>
+				<generated-value strategy="IDENTITY" />
+			</id>
+			<basic name="createDate">
+				<column name="CREATE_DATE"/>
+			</basic>
+			<basic name="goodsCode">
+				<column name="GOODS_CODE"/>
+			</basic>
+			<basic name="goodsDesc">
+				<column name="GOODS_DESC"/>
+			</basic>
+			<basic name="goodsPrice">
+				<column name="GOODS_PRICE"/>
+			</basic>
+			<basic name="goodsCount">
+				<column name="GOODS_COUNT"/>
+			</basic>
+			<many-to-one name="payment" >
+				<join-column name="PAYMENT_ID" />
+			</many-to-one>
+		</attributes>
+	</entity>
+	<entity class="PaymentTransaction">
+		<table name="T_PAYMENT_TRANSACTION" />
+		<attributes>
+			<id name="id">
+				<column name="ID"  unique="true" nullable="false"/>
+				<generated-value strategy="IDENTITY" />
+			</id>
+			<basic name="createDate">
+				<column name="CREATE_DATE" />
+			</basic>
+			<basic name="paymentNo">
+				<column name="PAYMENT_NO" />
+			</basic>
+			<basic name="status">
+				<column name="STATUS" />
+			</basic>
+			<basic name="dealNo">
+				<column name="DEAL_NO" />
+			</basic>
+			<basic name="payTime">
+				<column name="PAY_TIME" />
+			</basic>
+			<basic name="payAmount">
+				<column name="PAY_AMOUNT" />
+			</basic>
+			<basic name="paymentAmount">
+				<column name="PAYMENT_AMOUNT" />
+			</basic>
+			<basic name="payType">
+				<column name="PAY_TYPE" />
+			</basic>
+			<basic name="platform">
+				<column name="PLATFORM" />
+			</basic>
+			<basic name="currency">
+				<column name="CURRENCY" />
+			</basic>
+			<basic name="cardNo">
+				<column name="CARD_NO" />
+			</basic>
+			<basic name="expireDate">
+				<column name="EXPIREDATE" />
+			</basic>
+			<basic name="cvv">
+				<column name="CVV" />
+			</basic>
+			<basic name="bankCode">
+				<column name="BANKCODE" />
+			</basic>
+			<basic name="bankName">
+				<column name="BANKNAME" />
+			</basic>
+			<basic name="reqNo">
+				<column name="REQ_NO" />
+			</basic>
+			<basic name="merchantNo">
+				<column name="MERCHANT_NO" />
+			</basic>
+			<basic name="updateTime">
+				<column name="UPDATE_TIME" />
+			</basic>
+			<many-to-one name="payment" >
+				<join-column name="PAYMENT_ID" />
+			</many-to-one>
+		</attributes>
+	</entity>
+	<entity class="ReconciliationDetail">
+		<table name="T_RECONCILIATION_DETAIL" />
+		<attributes>
+			<id name="id">
+				<column name="ID"  unique="true" nullable="false"/>
+				<generated-value strategy="IDENTITY" />
+			</id>
+			<basic name="createDate">
+				<column name="CREATE_DATE" />
+			</basic>
+			<basic name="paymentNo">
+				<column name="PAYMENT_NO" />
+			</basic>
+			<basic name="dealNo">
+				<column name="DEAL_NO" />
+			</basic>
+			<basic name="payTime">
+				<column name="PAY_TIME" />
+			</basic>
+			<basic name="payAmount">
+				<column name="PAY_AMOUNT" />
+			</basic>
+			<basic name="paymentAmount">
+				<column name="PAYMENT_AMOUNT" />
+			</basic>
+			<basic name="payType">
+				<column name="PAY_TYPE" />
+			</basic>
+			<basic name="cardNo">
+				<column name="CARD_NO" />
+			</basic>
+			<basic name="currency">
+				<column name="CURRENCY" />
+			</basic>
+			<basic name="bankCode">
+				<column name="BANKCODE" />
+			</basic>
+			<basic name="bankName">
+				<column name="BANKNAME" />
+			</basic>
+			<basic name="cardType">
+				<column name="CARD_TYPE" />
+			</basic>
+			<basic name="status">
+				<column name="STATUS" />
+			</basic>
+			<basic name="terminalNo">
+				<column name="TERMINAL_NO" />
+			</basic>
+			<basic name="terminalName">
+				<column name="TERMINAL_NAME" />
+			</basic>
+			<basic name="bussType">
+				<column name="BUSS_TYPE" />
+			</basic>
+			<basic name="platform">
+				<column name="PLATFORM" />
+			</basic>
+			<basic name="merchantNo">
+				<column name="MERCHANT_NO" />
+			</basic>
+			<basic name="third_no">
+				<column name="THIRD_NO" />
+			</basic>
+			<basic name="updateTime">
+				<column name="UPDATE_TIME" />
+			</basic>
+		</attributes>
+	</entity>
+	<entity class="AuthPro">
+		<table name="T_AUTH_PRO" />
+		<attributes>
+			<id name="id">
+				<column name="ID" unique="true" nullable="false"/>
+				<generated-value strategy="IDENTITY" />
+			</id>
+			<basic name="createDate">
+				<column name="CREATE_DATE"/>
+			</basic>
+			<basic name="consumerID">
+				<column name="CONSUMER_ID"/>
+			</basic>
+			<basic name="consumerPW">
+				<column name="CONSUMER_PW"/>
+			</basic>
+			<basic name="consumerName">
+				<column name="CONSUMER_NAME"/>
+			</basic>
+			<basic name="comCode">
+				<column name="COM_CODE"/>
+			</basic>
+			<basic name="comName">
+				<column name="COM_NAME"/>
+			</basic>
+			<basic name="platfromCode">
+				<column name="PLATFORM_CODE"/>
+			</basic>
+			<basic name="platformName">
+				<column name="PLATFORM_NAME"/>
+			</basic>
+			<basic name="payTypeCode">
+				<column name="PAY_TYPE_CODE"/>
+			</basic>
+			<basic name="payTypeName">
+				<column name="PAY_TYPE_NAME"/>
+			</basic>
+		</attributes>
+	</entity>
+</entity-mappings>

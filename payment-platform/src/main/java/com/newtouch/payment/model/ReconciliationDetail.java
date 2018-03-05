@@ -7,22 +7,22 @@ import javax.persistence.*;
 import com.newtouch.common.model.BaseEntity;
 
 /**
- * 支付流程轨迹模型
+ * 对账明细模型
  *
  * @author
  */
 @Entity
-@Table(name = "T_PAYMENT_TRANSACTION")
-public class PaymentTransaction extends BaseEntity {
+@Table(name = "T_RECONCILIATION_DETAIL")
+public class ReconciliationDetail extends BaseEntity {
 
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 8462455134524142536L;
+	private static final long serialVersionUID = -9195173069514149890L;
 
 	@Id
-//	@SequenceGenerator(name = "SEQ_T_PAY_TRANS_ID", sequenceName = "SEQ_T_PAY_TRANS_ID", allocationSize = 1)
-//	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_T_PAY_TRANS_ID")
+//	@SequenceGenerator(name = "SEQ_T_RECON_DETAIL_ID", sequenceName = "SEQ_T_RECON_DETAIL_ID", allocationSize = 1)
+//	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_T_RECON_DETAIL_ID")
 	@Column(name = "ID", nullable = false)
 	private Long id;
 	
@@ -37,12 +37,6 @@ public class PaymentTransaction extends BaseEntity {
 	 */
 	@Column(name = "PAYMENT_NO")
 	private String paymentNo;
-	
-	/**
-	 * 状态
-	 */
-	@Column(name = "STATUS")
-	private String status;
 	
 	/**
 	 * 支付流水
@@ -75,34 +69,16 @@ public class PaymentTransaction extends BaseEntity {
 	private String payType;
 	
 	/**
-	 * 支付方
-	 */
-	@Column(name = "PLATFORM")
-	private String platform;
-	
-	/**
-	 * 币种
-	 */
-	@Column(name = "CURRENCY")
-	private String currency;
-	
-	/**
 	 * 卡号
 	 */
 	@Column(name = "CARD_NO")
 	private String cardNo;
 	
 	/**
-	 * 卡有效期
+	 * 币种
 	 */
-	@Column(name = "EXPIREDATE")
-	private String expireDate;
-	
-	/**
-	 * cvv
-	 */
-	@Column(name = "CVV")
-	private String cvv;
+	@Column(name = "CURRENCY")
+	private String currency;
 	
 	/**
 	 * 银行代码
@@ -117,10 +93,40 @@ public class PaymentTransaction extends BaseEntity {
 	private String bankName;
 	
 	/**
-	 * 请求流水
+	 * 卡类型
 	 */
-	@Column(name = "REQ_NO")
-	private String reqNo;
+	@Column(name = "CARD_TYPE")
+	private String cardType;
+	
+	/**
+	 * 状态
+	 */
+	@Column(name = "STATUS")
+	private String status;
+	
+	/**
+	 * 终端号
+	 */
+	@Column(name = "TERMINAL_NO")
+	private String terminalNo;
+	
+	/**
+	 * 终端名称
+	 */
+	@Column(name = "TERMINAL_NAME")
+	private String terminalName;
+	
+	/**
+	 * 交易类型
+	 */
+	@Column(name = "BUSS_TYPE")
+	private String bussType;
+	
+	/**
+	 * 支付方
+	 */
+	@Column(name = "PLATFORM")
+	private String platform;
 	
 	/**
 	 * 商户号
@@ -129,11 +135,10 @@ public class PaymentTransaction extends BaseEntity {
 	private String merchantNo;
 	
 	/**
-	 * 支付ID
+	 * 第三方流水
 	 */
-	@ManyToOne()
-	@JoinColumn(name = "PAYMENT_ID")
-	private Payment payment;
+	@Column(name = "THIRD_NO")
+	private String thirdNo;
 	
 	/**
 	 * 更新时间
@@ -163,14 +168,6 @@ public class PaymentTransaction extends BaseEntity {
 
 	public void setPaymentNo(String paymentNo) {
 		this.paymentNo = paymentNo;
-	}
-
-	public String getStatus() {
-		return status;
-	}
-
-	public void setStatus(String status) {
-		this.status = status;
 	}
 
 	public String getDealNo() {
@@ -213,22 +210,6 @@ public class PaymentTransaction extends BaseEntity {
 		this.payType = payType;
 	}
 
-	public String getPlatform() {
-		return platform;
-	}
-
-	public void setPlatform(String platform) {
-		this.platform = platform;
-	}
-
-	public String getCurrency() {
-		return currency;
-	}
-
-	public void setCurrency(String currency) {
-		this.currency = currency;
-	}
-
 	public String getCardNo() {
 		return cardNo;
 	}
@@ -237,20 +218,12 @@ public class PaymentTransaction extends BaseEntity {
 		this.cardNo = cardNo;
 	}
 
-	public String getExpireDate() {
-		return expireDate;
+	public String getCurrency() {
+		return currency;
 	}
 
-	public void setExpireDate(String expireDate) {
-		this.expireDate = expireDate;
-	}
-
-	public String getCvv() {
-		return cvv;
-	}
-
-	public void setCvv(String cvv) {
-		this.cvv = cvv;
+	public void setCurrency(String currency) {
+		this.currency = currency;
 	}
 
 	public String getBankCode() {
@@ -269,12 +242,52 @@ public class PaymentTransaction extends BaseEntity {
 		this.bankName = bankName;
 	}
 
-	public String getReqNo() {
-		return reqNo;
+	public String getCardType() {
+		return cardType;
 	}
 
-	public void setReqNo(String reqNo) {
-		this.reqNo = reqNo;
+	public void setCardType(String cardType) {
+		this.cardType = cardType;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public String getTerminalNo() {
+		return terminalNo;
+	}
+
+	public void setTerminalNo(String terminalNo) {
+		this.terminalNo = terminalNo;
+	}
+
+	public String getTerminalName() {
+		return terminalName;
+	}
+
+	public void setTerminalName(String terminalName) {
+		this.terminalName = terminalName;
+	}
+
+	public String getBussType() {
+		return bussType;
+	}
+
+	public void setBussType(String bussType) {
+		this.bussType = bussType;
+	}
+
+	public String getPlatform() {
+		return platform;
+	}
+
+	public void setPlatform(String platform) {
+		this.platform = platform;
 	}
 
 	public String getMerchantNo() {
@@ -285,12 +298,12 @@ public class PaymentTransaction extends BaseEntity {
 		this.merchantNo = merchantNo;
 	}
 
-	public Payment getPayment() {
-		return payment;
+	public String getThirdNo() {
+		return thirdNo;
 	}
 
-	public void setPayment(Payment payment) {
-		this.payment = payment;
+	public void setThirdNo(String thirdNo) {
+		this.thirdNo = thirdNo;
 	}
 
 	public String getUpdateTime() {

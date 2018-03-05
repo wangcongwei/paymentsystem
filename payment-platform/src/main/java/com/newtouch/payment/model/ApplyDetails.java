@@ -21,28 +21,47 @@ public class ApplyDetails extends BaseEntity {
 	private static final long serialVersionUID = 1056615033105527711L;
 	
 	@Id
-	@SequenceGenerator(name = "SEQ_T_APPLY_DETAILS_ID", sequenceName = "SEQ_T_APPLY_DETAILS_ID", allocationSize = 1)
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_T_APPLY_DETAILS_ID")
+//	@SequenceGenerator(name = "SEQ_T_APPLY_DETAILS_ID", sequenceName = "SEQ_T_APPLY_DETAILS_ID", allocationSize = 1)
+//	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_T_APPLY_DETAILS_ID")
 	@Column(name = "ID", nullable = false)
 	private Long id;
 	
+	/**
+	 * 创建时间
+	 */
 	@Column(name = "CREATE_DATE")
 	private Date createDate;
-	
+
+	/**
+	 * 商品代码
+	 */
 	@Column(name = "GOODS_CODE")
 	private String goodsCode;
 	
+	/**
+	 * 商品描述
+	 */
 	@Column(name = "GOODS_DESC")
 	private String goodsDesc;
 	
+	/**
+	 * 商品价格
+	 */
 	@Column(name = "GOODS_PRICE")
 	private String goodsPrice;
 	
+	/**
+	 * 商品数量
+	 */
 	@Column(name = "GOODS_COUNT")
 	private String goodsCount;
 	
-	@Column(name = "PAYMENT_ID")
-	private Long paymentId;
+	/**
+	 * 支付ID
+	 */
+	@ManyToOne()
+	@JoinColumn(name = "PAYMENT_ID")
+	private Payment payment;
 
 	public Long getId() {
 		return id;
@@ -92,12 +111,12 @@ public class ApplyDetails extends BaseEntity {
 		this.goodsCount = goodsCount;
 	}
 
-	public Long getPaymentId() {
-		return paymentId;
+	public Payment getPayment() {
+		return payment;
 	}
 
-	public void setPaymentId(Long paymentId) {
-		this.paymentId = paymentId;
+	public void setPayment(Payment payment) {
+		this.payment = payment;
 	}
-	
+
 }

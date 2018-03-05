@@ -14,7 +14,6 @@
 				com.newtouch.common.repository.ConfigRepository,
 				com.newtouch.common.repository.CodeRepository,
 				com.newtouch.common.repository.CommonRepository,
-				
 				com.newtouch.payment.repository.BusinessNumRepo,				
 				com.newtouch.payment.repository.OrderPayRequestRepo,
 				com.newtouch.payment.repository.OrderRepo,
@@ -59,11 +58,7 @@
 		<property name="mappingResources">
 			<list>
 				<value>model/app-core.mysql.orm.xml</value>
-				<value>paymodel/businessNum.mysql.orm.xml</value>
-				<value>paymodel/order.mysql.orm.xml</value>
-				<value>paymodel/orderpayrequest.mysql.orm.xml</value>
-				<value>paymodel/tpayplatformtransaction.mysql.orm.xml</value>
-				<value>paymodel/compensationRecord.mysql.orm.xml</value>
+				<value>paymodel/payment.mysql.orm.xml</value>
 			</list>
 		</property>
 		<property name="persistenceProvider" ref="persistenceProvider" />
