@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 
 import com.newtouch.common.model.QueryParams;
 import com.newtouch.demo.service.impl.CurdServiceImpl;
-import com.newtouch.payment.im.OrderPayStatus;
+import com.newtouch.payment.im.PaymentStatus;
 import com.newtouch.payment.im.PayChannel;
 import com.newtouch.payment.im.PayRequestStatus;
 import com.newtouch.payment.model.BusinessNum;
@@ -96,14 +96,14 @@ public class OrderPayServiceImpl implements OrderPayService {
 		if (!StringUtils.isBlank(orderNo)) {
 			order = orderRepo.findByOrderNo(orderNo);
 		}
-		if(order!=null&&OrderPayStatus.E_3.equals(order.getOrderStatus())){
+		if(order!=null&&PaymentStatus.PS_PAYING.equals(order.getOrderStatus())){
 			orderPayRespVo.setOrderNo(orderNo);
 			orderPayRespVo.setErrorCode("");
 			orderPayRespVo.setErrorMessage("订单支付中");
 			orderPayRespVo.setStatus("1");
 			return orderPayRespVo;
 		}
-		if(order!=null&&OrderPayStatus.E_4.equals(order.getOrderStatus())){
+		if(order!=null&&PaymentStatus.PS_SUCCESS.equals(order.getOrderStatus())){
 			orderPayRespVo.setOrderNo(orderNo);
 			orderPayRespVo.setErrorCode("");
 			orderPayRespVo.setErrorMessage("订单支付成功");
@@ -262,13 +262,13 @@ public class OrderPayServiceImpl implements OrderPayService {
 			quickOrderPayRespVo.setStatus("0");
 			return quickOrderPayRespVo;
 		}
-		if(OrderPayStatus.E_3.equals(order.getOrderStatus())){
+		if(PaymentStatus.PS_PAYING.equals(order.getOrderStatus())){
 			quickOrderPayRespVo.setErrorCode("");
 			quickOrderPayRespVo.setErrorMessage("订单支付中");
 			quickOrderPayRespVo.setStatus("3");
 			return quickOrderPayRespVo;
 		}
-		if(OrderPayStatus.E_4.equals(order.getOrderStatus())){
+		if(PaymentStatus.PS_SUCCESS.equals(order.getOrderStatus())){
 			quickOrderPayRespVo.setErrorCode("");
 			quickOrderPayRespVo.setErrorMessage("订单已支付成功");
 			quickOrderPayRespVo.setStatus("4");
@@ -455,7 +455,7 @@ public class OrderPayServiceImpl implements OrderPayService {
 			calendar.add(Calendar.DATE, 1);
 			order.setOutTime(calendar.getTime());
 			String orderNo = getOrderNo();
-			order.setOrderStatus(OrderPayStatus.E_2);
+			order.setOrderStatus(PaymentStatus.PS_WAITPAY);
 			order.setOrderNo(orderNo);
 		}
 		order.setUpdateTime(new Date());
@@ -498,7 +498,7 @@ public class OrderPayServiceImpl implements OrderPayService {
 		calendar.setTime(today); 
 		calendar.add(Calendar.DATE, 1);
 		order.setOutTime(calendar.getTime());
-		order.setOrderStatus(OrderPayStatus.E_2);
+		order.setOrderStatus(PaymentStatus.PS_WAITPAY);
 		String orderNo = getOrderNo();
 		order.setOrderNo(orderNo);
 		orderRepo.save(order);

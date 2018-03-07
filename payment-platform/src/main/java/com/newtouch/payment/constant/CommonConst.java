@@ -21,4 +21,53 @@ public class CommonConst {
 	 * 日期格式：yyyyMMddHHmmss
 	 */
 	public static final String datePatternyyyyMMddHHmmss = "yyyyMMddHHmmss";
+	
+	/** 常量1 */
+	public static final String CONST_ONE = "1";
+	
+	/** 常量1 */
+	public static final String CONST_ZERO = "0";
+	
+	/** 币种 */
+	public static final String CURRENCY = "CNY";
+	
+	/** 服务消费方 */
+	public static final String CONSUMERID = "consumerID";
+	
+	/** 服务消费方 */
+	public static final String COMCODE = "comCode";
+	
+	/** 时间戳 */
+	public static final String TIMESTAMP = "timeStamp";
+	
+	/** 总金额 */
+	public static final String SUMAMOUNT = "sumAmount";
+	
+	/** 支付有效时间开始时间 */
+	public static final String PAYEFFSTART = "payEffStart";
+	
+	/** 支付有效时间结束时间 */
+	public static final String PAYEFFEND = "payEffEnd";
+	
+	/** 申请明细 */
+	public static final String APPLYDETAILS = "applyDetails";
+	
+	/** 商品代码 */
+	public static final String GOODSCODE = "goodsCode";
+	
+	/** 商品描述 */
+	public static final String GOODSDESC = "goodsDesc";
+	
+	/** 商品价格 */
+	public static final String GOODSPRICE = "goodsPrice";
+	
+	/** 商品数量 */
+	public static final String GOODSCOUNT = "goodsCount";
+	
+	/** 支付号 */
+	public static final String PAYMENTNO = "paymentNo";
+	
+	/** 验证码 */
+	public static final String CHECKNO = "checkNo";
+	
 }

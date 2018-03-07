@@ -48,7 +48,7 @@ public class ApplyDetails extends BaseEntity {
 	 * 商品价格
 	 */
 	@Column(name = "GOODS_PRICE")
-	private String goodsPrice;
+	private Double goodsPrice;
 	
 	/**
 	 * 商品数量
@@ -95,11 +95,11 @@ public class ApplyDetails extends BaseEntity {
 		this.goodsDesc = goodsDesc;
 	}
 
-	public String getGoodsPrice() {
+	public Double getGoodsPrice() {
 		return goodsPrice;
 	}
 
-	public void setGoodsPrice(String goodsPrice) {
+	public void setGoodsPrice(Double goodsPrice) {
 		this.goodsPrice = goodsPrice;
 	}
 
