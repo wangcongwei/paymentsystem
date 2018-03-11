@@ -9,8 +9,6 @@ import org.apache.commons.lang.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,11 +26,11 @@ import com.newtouch.payment.constant.CommonConst;
 import com.newtouch.payment.im.PaymentStatus;
 import com.newtouch.payment.model.ApplyDetails;
 import com.newtouch.payment.model.AuthPro;
-import com.newtouch.payment.model.Order;
 import com.newtouch.payment.model.Payment;
 import com.newtouch.payment.repository.ApplyDetailsRepo;
 import com.newtouch.payment.repository.AuthProRepo;
 import com.newtouch.payment.repository.PaymentRepo;
+import com.newtouch.payment.service.SerialNumberService;
 
 @RequestMapping(value = "/paymentno")
 @Controller
@@ -84,8 +82,9 @@ public class PaymentNoApplyController {
 		Payment payment = new Payment();
 		payment.setCreateDate(now);
 		payment.setPaymentStatus(PaymentStatus.PS_WAITPAY);
-		payment.setPaymentNo("123456789");
-		payment.setCheckNo("123456");
+		String comCode = jo.getString(CommonConst.COMCODE);
+		payment.setPaymentNo(SerialNumberService.createSerial(comCode));
+		payment.setCheckNo(SerialNumberService.createCheckNo());
 		payment.setPaymentAmount(Double.valueOf(sumAmount));
 		payment.setComCode(jo.getString(CommonConst.COMCODE));
 		try {
