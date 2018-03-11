@@ -13,6 +13,11 @@ public class CommonConst {
 	public static final String datePatternYYYYMMDD10 = "yyyy-MM-dd";
 	
 	/**
+	 * 日期格式：yyMMddHHmmss
+	 */
+	public static final String datePatternYYMMDDHHMMSS = "yyMMddHHmmss";
+	
+	/**
 	 * 日期格式：yyyy-MM-dd HH:mm:ss
 	 */
 	public static final String datePatternYYYYMMDDHHMMSS = "yyyy-MM-dd HH:mm:ss";
