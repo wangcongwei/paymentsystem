@@ -1,5 +1,6 @@
 package com.newtouch.payment.service;
 
+import com.newtouch.payment.model.PaymentTransaction;
 import com.newtouch.payment.model.TPayPlatformTransation;
 import com.newtouch.payment.model.DTO.KuaiqianQuickPayRequestDTO;
 import com.newtouch.payment.model.DTO.KuaiqianQuickPayResponseDTO;
@@ -18,5 +19,5 @@ public interface KuaiqianQuickPayService {
 	 * @param tppt-支付交易流水表
 	 * @return 响应
 	 */
-	public KuaiqianQuickPayResponseDTO quickPay(TPayPlatformTransation tppt);
+	public KuaiqianQuickPayResponseDTO quickPay(PaymentTransaction pt);
 }

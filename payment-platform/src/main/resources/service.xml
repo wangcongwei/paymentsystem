@@ -9,5 +9,12 @@
 	<context:component-scan base-package="com.newtouch.demo.service" />
 	<context:component-scan base-package="com.newtouch.payment.service" />
 
-	
+	<!-- 快钱支付加密解密-->
+	<bean id="kuaiqianSignatureService"
+		class="com.newtouch.payment.service.impl.KuaiqianSignatureServiceImpl"
+		init-method="initKeyStore">
+		<property name="ksfile" value="payment/onlinepayment/tester-rsa.pfx" />
+		<property name="certfile" value="payment/onlinepayment/99bill.cert.rsa.20340630.cer" />
+		<property name="ksLoadPass" value="123456" />
+	</bean>
 </beans>

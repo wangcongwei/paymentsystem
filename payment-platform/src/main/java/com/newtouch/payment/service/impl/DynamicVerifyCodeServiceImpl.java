@@ -28,16 +28,20 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
 import com.newtouch.common.model.QueryParams;
-import com.newtouch.payment.model.Order;
-import com.newtouch.payment.model.OrderPayRequest;
+import com.newtouch.payment.model.Payment;
 import com.newtouch.payment.model.DTO.DynamicVerifyCodeRequestDTO;
 import com.newtouch.payment.model.DTO.DynamicVerifyCodeResponseDTO;
-import com.newtouch.payment.repository.OrderPayRequestRepo;
-import com.newtouch.payment.repository.OrderRepo;
+import com.newtouch.payment.repository.PaymentRepo;
 import com.newtouch.payment.service.DynamicVerifyCodeService;
 import com.newtouch.payment.utils.kuaiqian.utils.Base64Binrary;
 import com.newtouch.payment.utils.kuaiqian.utils.MyX509TrustManager;
 
+/**
+ * 
+ * @author guanglei.ren
+ * @version 1.0
+ * @date 2018/03/12
+ */
 @Service(value = "dynamicVerifyCodeService")
 public class DynamicVerifyCodeServiceImpl implements DynamicVerifyCodeService {
 
@@ -55,34 +59,40 @@ public class DynamicVerifyCodeServiceImpl implements DynamicVerifyCodeService {
 	@Resource(name = "ehcacheManager")
 	private CacheManager ehcacheManager;
 	@Autowired
-	private OrderRepo orderRepo;
-	@Autowired
-	private OrderPayRequestRepo orderPayRequestRepo;
+	private PaymentRepo paymentRepo;
 
 	@Override
 	public DynamicVerifyCodeResponseDTO getDynamicVerifyCode(DynamicVerifyCodeRequestDTO request) {
 		// 返回结果对象
 		DynamicVerifyCodeResponseDTO response = new DynamicVerifyCodeResponseDTO();
 		// 非空字段逻辑校验
-		if (StringUtils.isBlank(request.getUserTransactionNo())) {
+		if (StringUtils.isBlank(request.getPaymentNo())) {
 			response.setErrorCode("2");
-			response.setErrorMessage("支付流水好不能为空！");
+			response.setErrorMessage("支付号不能为空！");
+			return response;
+		} else if (StringUtils.isBlank(request.getPlatform())) {
+			response.setErrorCode("2");
+			response.setErrorMessage("第三方支付平台号不能为空！");
 			return response;
 		} else if (StringUtils.isBlank(request.getAccountNo())) {
 			response.setErrorCode("2");
-			response.setErrorMessage("卡号不能为空！");
+			response.setErrorMessage("银行账号不能为空！");
 			return response;
 		} else if (StringUtils.isBlank(request.getTelePhone())) {
 			response.setErrorCode("2");
-			response.setErrorMessage("手机号不能为空！");
+			response.setErrorMessage("手机号码不能为空！");
 			return response;
 		}
 		//根据支付流水好查询订单信息
 		QueryParams queryParams = new QueryParams();
-		queryParams.put("paySeriNo", request.getUserTransactionNo());
-		OrderPayRequest orderPayRequest = orderPayRequestRepo.findByPaySeriNo(OrderPayRequest.class, queryParams);
-		queryParams.put("orderNo", orderPayRequest.getOrderNo());
-		Order order = orderRepo.findByOrderNo(Order.class, queryParams);
+		queryParams.put("paymentNo", request.getPaymentNo());
+		Payment payment = paymentRepo.findOneByParam(Payment.class, queryParams);
+		if (payment != null && payment.getPaymentAmount() != null) {
+		} else {
+			response.setErrorCode("2");
+			response.setErrorMessage("该支付号对应的支付金额为空，请确认！");
+			return response;
+		}
 
 		try {
 			System.setProperty("jsse.enableSNIExtension", "false");
@@ -111,7 +121,7 @@ public class DynamicVerifyCodeServiceImpl implements DynamicVerifyCodeService {
 			urlc.setRequestProperty("Authorization", auth);
 			// 发送urlConnection请求
 			OutputStream out = urlc.getOutputStream();
-			out.write(createRequestMsg(request, order).getBytes());
+			out.write(createRequestMsg(request, payment).getBytes());
 			out.flush();
 			out.close();
 			// 获取返回结果
@@ -132,7 +142,7 @@ public class DynamicVerifyCodeServiceImpl implements DynamicVerifyCodeService {
 				if ("00".equals(getDynNumContent.elementText("responseCode"))) {
 					// memcahe中放入令牌
 					String token = getDynNumContent.elementText("token");
-					ehcacheManager.getCache("ODCache").put("token_" + order.getOrderNo(), token);
+					ehcacheManager.getCache("ODCache").put("token_" + payment.getPaymentNo(), token);
 				} else {
 					response.setErrorCode("1");
 					response.setErrorMessage("调用服务失败！");
@@ -156,7 +166,7 @@ public class DynamicVerifyCodeServiceImpl implements DynamicVerifyCodeService {
 		return response;
 	}
 
-	private String createRequestMsg(DynamicVerifyCodeRequestDTO request, Order order) {
+	private String createRequestMsg(DynamicVerifyCodeRequestDTO request, Payment payment) {
 		String xmlContent = "";
 		try {
 			// 创建文档对象
@@ -172,7 +182,7 @@ public class DynamicVerifyCodeServiceImpl implements DynamicVerifyCodeService {
 			Element merchantIdNo = getDynNumContent.addElement("merchantId");// 商户号
 			merchantIdNo.setText(merchantId);
 			Element externalRefNumber = getDynNumContent.addElement("externalRefNumber");// 外部跟踪编号(即支付号)
-			externalRefNumber.setText(request.getUserTransactionNo());
+			externalRefNumber.setText(request.getPaymentNo());
 			if (StringUtils.isNotBlank(request.getAccountName())) {
 				Element cardHolderName = getDynNumContent.addElement("cardHolderName");// 持卡人姓名
 				cardHolderName.setText(request.getAccountName());
@@ -187,13 +197,13 @@ public class DynamicVerifyCodeServiceImpl implements DynamicVerifyCodeService {
 			}
 			Element pan = getDynNumContent.addElement("pan");// 卡号
 			pan.setText(request.getAccountNo());
-			if (StringUtils.isNotBlank(request.getBankId())) {
+			if (StringUtils.isNotBlank(request.getBankCode())) {
 				Element bankId = getDynNumContent.addElement("bankId");// 银行代码
-				bankId.setText(request.getBankId());
+				bankId.setText(request.getBankCode());
 			}
-			if (StringUtils.isNotBlank(request.getExpiredDate())) {
+			if (StringUtils.isNotBlank(request.getExpiredMonth()) && StringUtils.isNotBlank(request.getExpiredYear())) {
 				Element expiredDate = getDynNumContent.addElement("expiredDate");// 卡效期
-				expiredDate.setText(request.getExpiredDate());
+				expiredDate.setText(request.getExpiredMonth()+request.getExpiredYear());
 			}
 			Element phoneNO = getDynNumContent.addElement("phoneNO");// 手机号码
 			phoneNO.setText(request.getTelePhone());
@@ -202,7 +212,7 @@ public class DynamicVerifyCodeServiceImpl implements DynamicVerifyCodeService {
 				cvv2.setText(request.getCvv2());
 			}
 			Element amount = getDynNumContent.addElement("amount");// 金额
-			amount.setText(String.valueOf(order.getAmount()));
+			amount.setText(String.valueOf(payment.getPaymentAmount()));
 			// 报文数据
 			xmlContent = document.asXML();
 			logger.info("getDynNumRequest：" + xmlContent);

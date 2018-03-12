@@ -14,13 +14,12 @@
 				com.newtouch.common.repository.ConfigRepository,
 				com.newtouch.common.repository.CodeRepository,
 				com.newtouch.common.repository.CommonRepository,
-				com.newtouch.payment.repository.BusinessNumRepo,				
-				com.newtouch.payment.repository.OrderPayRequestRepo,
-				com.newtouch.payment.repository.OrderRepo,
-				com.newtouch.payment.repository.PayPlatformTransactionRepo,
-				com.newtouch.payment.repository.CompensationRecordRepo,
-				com.newtouch.demo.repository.OrderItemRepo,
-				com.newtouch.demo.repository.CurdRepo
+				com.newtouch.demo.repository.CurdRepo,
+				com.newtouch.payment.repository.ApplyDetailsRepo,
+				com.newtouch.payment.repository.AuthProRepi,
+				com.newtouch.payment.repository.PaymentRepo,
+				com.newtouch.payment.repository.PaymentTransactionRepo,
+				com.newtouch.payment.repository.ReconciliationDetailRepo
 			</value>
 		</property>
 	</bean>

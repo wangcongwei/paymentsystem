@@ -1,6 +1,5 @@
 package com.newtouch.payment.service.impl;
 
-import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Date;
@@ -8,22 +7,27 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+import javax.annotation.Resource;
+
 import org.apache.commons.lang.time.DateFormatUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.newtouch.common.model.QueryParams;
 import com.newtouch.payment.constant.CommonConst;
-import com.newtouch.payment.model.Order;
-import com.newtouch.payment.model.OrderPayRequest;
-import com.newtouch.payment.model.TPayPlatformTransation;
+import com.newtouch.payment.im.PaymentStatus;
+import com.newtouch.payment.im.Platform;
+import com.newtouch.payment.model.Payment;
+import com.newtouch.payment.model.PaymentTransaction;
 import com.newtouch.payment.model.DTO.KuaiqianGateWayResponseDTO;
-import com.newtouch.payment.repository.OrderPayRequestRepo;
-import com.newtouch.payment.repository.OrderRepo;
+import com.newtouch.payment.repository.PaymentRepo;
+import com.newtouch.payment.repository.PaymentTransactionRepo;
 import com.newtouch.payment.service.KuaiqianGateWayService;
-import com.newtouch.payment.utils.MD5Util;
+import com.newtouch.payment.service.SerialNumberService;
+import com.newtouch.payment.service.SignatureService;
 
 @Service(value="kuaiqianGateWayService")
 public class KuaiqianGateWayServiceImpl implements KuaiqianGateWayService {
@@ -31,32 +35,43 @@ public class KuaiqianGateWayServiceImpl implements KuaiqianGateWayService {
 	private static final Logger logger = LoggerFactory.getLogger(KuaiqianGateWayServiceImpl.class);
 	private static Properties pro;
 	@Autowired
-	private OrderRepo orderRepo;
+	private PaymentRepo paymentRepo;
 	@Autowired
-	private OrderPayRequestRepo orderPayRequestRepo;
+	private PaymentTransactionRepo paymentTransactionRepo;
+	
+	@Resource(name ="kuaiqianSignatureService")
+	private SignatureService kuaiqianSignatureService;
 
 	@Override
-	public KuaiqianGateWayResponseDTO gateWayPay(String userTransactionNo, String bankNo) {
+	public KuaiqianGateWayResponseDTO gateWayPay(String paymentNo, String payType, String bankNo) {
 
 		KuaiqianGateWayResponseDTO response = new KuaiqianGateWayResponseDTO();
 
 		Date now = new Date();
 		// 根据支付流水好查询订单信息
 		QueryParams queryParams = new QueryParams();
-		queryParams.put("paySeriNo", userTransactionNo);
-		OrderPayRequest orderPayRequest = orderPayRequestRepo.findByPaySeriNo(OrderPayRequest.class, queryParams);
-		queryParams.put("orderNo", orderPayRequest.getOrderNo());
-		Order order = orderRepo.findByOrderNo(Order.class, queryParams);
+		queryParams.put("paymentNo", paymentNo);
+		Payment payment = paymentRepo.findOneByParam(Payment.class, queryParams);
 
 		// 创建支付交易记录
-		TPayPlatformTransation tppt = new TPayPlatformTransation();
-		tppt.setCreateDate(now);
-		tppt.setAmount(order.getAmount().doubleValue());
-		tppt.setOrderNo(order.getOrderNo());
-		tppt.setPayType(pro.getProperty("payType"));
-		tppt.setPayTime(new Date());
-		tppt.setReqNo(userTransactionNo);
-		tppt.setStatus("CREATE");
+		PaymentTransaction pt = new PaymentTransaction();
+		pt.setCreateDate(now);
+		pt.setPaymentAmount(payment.getPaymentAmount());
+		pt.setPaymentNo(payment.getPaymentNo());
+		pt.setPayment(payment);
+		pt.setPayType(payType);
+		pt.setPayTime(now);
+		pt.setReqNo(SerialNumberService.createCheckNo());
+		pt.setPlatform(Platform.KUAIQIAN);
+		pt.setStatus("CREATE");
+		paymentTransactionRepo.save(pt);
+		
+		payment.setPayType(payType);
+		payment.setPaymentStatus(PaymentStatus.PS_PAYING);
+		payment.setPlatform(Platform.KUAIQIAN);
+		payment.setCurrency(CommonConst.CURRENCY);
+		payment.setUpdateTime(now);
+		paymentRepo.update(payment);
 
 		// 人民币网关账户号
 		/// 请登录快钱系统获取用户编号，用户编号后加01即为人民币网关账户号。
@@ -64,7 +79,7 @@ public class KuaiqianGateWayServiceImpl implements KuaiqianGateWayService {
 
 		// 人民币网关密钥
 		/// 区分大小写.请与快钱联系索取
-		String key = pro.getProperty("key"); // "GQWCL37T2IYEBYGF";
+//		String key = pro.getProperty("key"); // "GQWCL37T2IYEBYGF";
 
 		// 字符集.固定选择值。可为空。
 		/// 只能选择1、2、3.
@@ -93,10 +108,8 @@ public class KuaiqianGateWayServiceImpl implements KuaiqianGateWayService {
 		/// 默认值为1
 		String language = "1";
 
-		// 签名类型.固定值
-		/// 1代表MD5签名
-		/// 当前版本固定为1
-		String signType = "1";
+		//签名类型.固定值  1代表MD5签名;4 代表PKI加密签名方式
+		String signType="4";
 
 		// 支付人姓名
 		/// 可为中文或英文字符
@@ -113,28 +126,12 @@ public class KuaiqianGateWayServiceImpl implements KuaiqianGateWayService {
 
 		// 商户订单号
 		/// 由字母、数字、或[-][_]组成
-		String orderId = order.getOrderNo();
+		String orderId = payment.getPaymentNo();
 
 		// 订单金额
 		/// 以分为单位，必须是整型数字
 		/// 比方2，代表0.02元
-		String doubleAmount = order.getAmount().multiply(new BigDecimal(100)).setScale(0, RoundingMode.HALF_UP)
-				.toString();
-		// if(doubleAmount.length() - doubleAmount.indexOf(".") -1 > 2){
-		// doubleAmount = doubleAmount.substring(0, doubleAmount.indexOf(".")) +
-		// doubleAmount.substring(doubleAmount.indexOf(".")+1,doubleAmount.indexOf(".")+3);
-		// }else if(doubleAmount.length() - doubleAmount.indexOf(".") -1 == 2){
-		// doubleAmount = doubleAmount.substring(0, doubleAmount.indexOf(".")) +
-		// doubleAmount.substring(doubleAmount.indexOf(".")+1,doubleAmount.length());
-		// }else{
-		// doubleAmount = doubleAmount.substring(0, doubleAmount.indexOf(".")) +
-		// doubleAmount.substring(doubleAmount.indexOf(".")+1,doubleAmount.length())+"0";
-		// }
-		// while(doubleAmount.startsWith("0")){
-		// doubleAmount = doubleAmount.substring(1,doubleAmount.length());
-		// }
-
-		String orderAmount = doubleAmount;
+		String orderAmount = new BigDecimal(payment.getPaymentAmount()).multiply(new BigDecimal(100)).setScale(0, RoundingMode.HALF_UP).toString();
 
 		// 订单提交时间
 		/// 14位数字。年[4位]月[2位]日[2位]时[2位]分[2位]秒[2位]
@@ -158,14 +155,18 @@ public class KuaiqianGateWayServiceImpl implements KuaiqianGateWayService {
 
 		// 扩展字段1
 		/// 在支付结束后原样返回给商户
-		String ext1 = userTransactionNo;
+		String ext1 = orderId;
 
-		// 扩展字段2
-		String ext2 = "";
+		//扩展字段2
+		///在支付结束后原样返回给商户(修改为扩展字段)
+		JSONObject jo=new JSONObject();
+		jo.put("reqNo", pt.getReqNo() == null ? "" : pt.getReqNo());
+		String ext2= jo.toString();
+		
 		// 支付方式.固定选择值
 		/// 只能选择00、10、11、12、13、14
 		/// 00：组合支付（网关支付页面显示快钱支持的各种支付方式，推荐使用）10：银行卡支付（网关支付页面只显示银行卡支付）.11：电话银行支付（网关支付页面只显示电话支付）.12：快钱账户支付（网关支付页面只显示快钱账户支付）.13：线下支付（网关支付页面只显示线下支付方式）.14：B2B支付（网关支付页面只显示B2B支付，但需要向快钱申请开通才能使用）
-		String payType = pro.getProperty("payType");
+		String kuaiqianPayType = pro.getProperty("payType");
 
 		// 银行代码
 		/// 实现直接跳转到银行页面去支付,只在payType=10时才需设置参数
@@ -203,25 +204,18 @@ public class KuaiqianGateWayServiceImpl implements KuaiqianGateWayService {
 		signMsgVal = appendParam(signMsgVal, "productDesc", productDesc);
 		signMsgVal = appendParam(signMsgVal, "ext1", ext1);
 		signMsgVal = appendParam(signMsgVal, "ext2", ext2);
-		signMsgVal = appendParam(signMsgVal, "payType", payType);
+		signMsgVal = appendParam(signMsgVal, "payType", kuaiqianPayType);
 
-		if ("10".equals(payType)) {
+		if ("10".equals(kuaiqianPayType)) {
 			signMsgVal = appendParam(signMsgVal, "bankId", bankId);
 		}
 
 		signMsgVal = appendParam(signMsgVal, "redoFlag", redoFlag);
 		signMsgVal = appendParam(signMsgVal, "pid", pid);
-		signMsgVal = appendParam(signMsgVal, "key", key);
 
-		logger.info("加密前的字符串 before md5 log :" + signMsgVal.toString());
+		logger.info("加密前的字符串 before PKI log :" + signMsgVal.toString());
 
-		String signMsg = "";
-		try {
-			signMsg = MD5Util.md5Hex(signMsgVal.getBytes("UTF-8")).toUpperCase();
-		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			logger.info("加密失败:" + e);
-		}
+		String signMsg = kuaiqianSignatureService.signature(signMsgVal.toString().getBytes());
 		logger.info("signMsg's value is :" + signMsg);
 
 		// 生成支付请求参数，发送到快钱。
@@ -245,10 +239,10 @@ public class KuaiqianGateWayServiceImpl implements KuaiqianGateWayService {
 		params.put("productDesc", productDesc);
 		params.put("ext1", ext1);
 		params.put("ext2", ext2);
-		params.put("payType", payType);
+		params.put("payType", kuaiqianPayType);
 		params.put("redoFlag", redoFlag);
 		params.put("pid", pid);
-		if ("10".equals(payType)) {
+		if ("10".equals(kuaiqianPayType)) {
 			params.put("bankId", bankId);
 		}
 		params.put("bankId", bankId);

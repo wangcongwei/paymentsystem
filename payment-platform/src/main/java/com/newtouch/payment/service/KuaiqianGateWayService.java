@@ -9,6 +9,6 @@ public interface KuaiqianGateWayService {
 	 * @param userTransactionNo
 	 * @return
 	 */
-	public KuaiqianGateWayResponseDTO gateWayPay(String userTransactionNo,String bankId);
+	public KuaiqianGateWayResponseDTO gateWayPay(String paymentNo, String payType, String bankId);
 
 }
