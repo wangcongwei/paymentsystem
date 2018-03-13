@@ -2,19 +2,14 @@ package com.newtouch.payment.task;
 
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.newtouch.common.model.QueryParams;
-import com.newtouch.payment.model.CompensationRecord;
-import com.newtouch.payment.model.OrderPayRequest;
-import com.newtouch.payment.model.TPayPlatformTransation;
 //import com.newtouch.payment.repository.OrderPayRequestRepo;
 //import com.newtouch.payment.repository.PayPlatformTransactionRepo;
 import com.newtouch.payment.service.KuaiqianQuickPayService;
 import com.newtouch.payment.service.TransFlowSearch;
-import com.newtouch.payment.service.TransStatusSearch;
 
 
 public class TransFlowTask {
@@ -31,8 +26,8 @@ public class TransFlowTask {
 //	@Autowired
 //	private OrderPayRequestRepo orderPayRequestRepo;
 	
-	@Autowired
-	private TransStatusSearch transStatusSearch;
+//	@Autowired
+//	private TransStatusSearch transStatusSearch;
 	
 	
 	
@@ -132,9 +127,9 @@ public class TransFlowTask {
 //		this.orderPayRequestRepo = orderPayRequestRepo;
 //	}
 
-	public void setTransStatusSearch(TransStatusSearch transStatusSearch) {
-		this.transStatusSearch = transStatusSearch;
-	}
+//	public void setTransStatusSearch(TransStatusSearch transStatusSearch) {
+//		this.transStatusSearch = transStatusSearch;
+//	}
 	
 	
 

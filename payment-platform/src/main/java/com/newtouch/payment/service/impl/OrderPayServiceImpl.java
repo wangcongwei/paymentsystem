@@ -18,19 +18,18 @@ import org.springframework.stereotype.Service;
 import com.newtouch.common.model.QueryParams;
 import com.newtouch.demo.service.impl.CurdServiceImpl;
 import com.newtouch.payment.im.PaymentStatus;
-import com.newtouch.payment.im.PayChannel;
+import com.newtouch.payment.im.PayType;
 import com.newtouch.payment.im.PayRequestStatus;
 import com.newtouch.payment.model.BusinessNum;
 import com.newtouch.payment.model.Order;
 import com.newtouch.payment.model.OrderPayRequest;
+import com.newtouch.payment.model.Payment;
 import com.newtouch.payment.model.DTO.DynamicVerifyCodeRequestDTO;
 import com.newtouch.payment.model.DTO.DynamicVerifyCodeResponseDTO;
 import com.newtouch.payment.model.DTO.KuaiqianGateWayResponseDTO;
 import com.newtouch.payment.model.DTO.KuaiqianQuickPayRequestDTO;
 import com.newtouch.payment.model.DTO.KuaiqianQuickPayResponseDTO;
-import com.newtouch.payment.repository.BusinessNumRepo;
-import com.newtouch.payment.repository.OrderPayRequestRepo;
-import com.newtouch.payment.repository.OrderRepo;
+import com.newtouch.payment.repository.PaymentRepo;
 import com.newtouch.payment.service.DynamicVerifyCodeService;
 import com.newtouch.payment.service.KuaiqianGateWayService;
 import com.newtouch.payment.service.KuaiqianQuickPayService;
@@ -52,13 +51,13 @@ public class OrderPayServiceImpl implements OrderPayService {
 	private static Logger logger = LoggerFactory.getLogger(CurdServiceImpl.class);
 	
 	@Autowired
-	private OrderRepo orderRepo;
-
-	@Autowired
-	private OrderPayRequestRepo orderPayRequestRepo;
-
-	@Autowired
-	private BusinessNumRepo businessNumRepo;
+	private PaymentRepo paymentRepo;
+//
+//	@Autowired
+//	private OrderPayRequestRepo orderPayRequestRepo;
+//
+//	@Autowired
+//	private BusinessNumRepo businessNumRepo;
 	
 	
 	@Autowired
@@ -78,9 +77,9 @@ public class OrderPayServiceImpl implements OrderPayService {
 	public OrderPayRespVo doPay(OrderPayReqVo orderPayReqVo) {
 		StringBuffer errorMsg = new StringBuffer("");
 
-		if (checkBusNum(orderPayReqVo.getBusNum(), PayChannel.E_1)) {
-			errorMsg.append("未开通该支付方式!");
-		}
+//		if (checkBusNum(orderPayReqVo.getBusNum(), PayType.pay)) {
+//			errorMsg.append("未开通该支付方式!");
+//		}
 		// 校验商户参数
 		errorMsg.append(checkRequest(orderPayReqVo.getAmount(), "订单金额"));
 		errorMsg.append(checkRequest(orderPayReqVo.getBusNum(), "商户号"));
@@ -94,7 +93,7 @@ public class OrderPayServiceImpl implements OrderPayService {
 		String orderNo = orderPayRespVo.getOrderNo();
 		Order order = null;
 		if (!StringUtils.isBlank(orderNo)) {
-			order = orderRepo.findByOrderNo(orderNo);
+//			order = orderRepo.findByOrderNo(orderNo);
 		}
 		if(order!=null&&PaymentStatus.PS_PAYING.equals(order.getOrderStatus())){
 			orderPayRespVo.setOrderNo(orderNo);
@@ -123,8 +122,8 @@ public class OrderPayServiceImpl implements OrderPayService {
 		OrderPayRequest orderPayRequest = savePayRequest(order,null,null,null,null,null);
 		// TODO 调用支付方法,返回调用结果
 		try{
-			KuaiqianGateWayResponseDTO kuaiqianGateWayResponseDTO=kuaiqianGateWayService.gateWayPay(orderPayRequest.getPaySeriNo(), "1");
-			orderPayRespVo.setPayUrl(kuaiqianGateWayResponseDTO.getUrl());
+//			KuaiqianGateWayResponseDTO kuaiqianGateWayResponseDTO=kuaiqianGateWayService.gateWayPay(orderPayRequest.getPaySeriNo(), "1");
+//			orderPayRespVo.setPayUrl(kuaiqianGateWayResponseDTO.getUrl());
 			orderPayRespVo.setErrorCode("");
 			orderPayRespVo.setErrorMessage("");
 			orderPayRespVo.setStatus("1");
@@ -145,20 +144,20 @@ public class OrderPayServiceImpl implements OrderPayService {
 	public OrderQueryRespVo doFindByOrderNo(OrderQueryReqVo orderQueryReqVo) {
 		String orderNo = orderQueryReqVo.getOrderNo();// 支付订单号
 		String busNum = orderQueryReqVo.getBusNum();// 商户号
-		Order order = orderRepo.findByOrderNo(orderNo);
+//		Order order = orderRepo.findByOrderNo(orderNo);
 		OrderQueryRespVo orderQueryRespVo = new OrderQueryRespVo();
-		if (busNum != null && busNum.equals(order.getBusNum())) {
-			orderQueryRespVo.setOrderStatus(order.getOrderStatus());
+//		if (busNum != null && busNum.equals(order.getBusNum())) {
+//			orderQueryRespVo.setOrderStatus(order.getOrderStatus());
 			orderQueryRespVo.setErrorCode("");
 			orderQueryRespVo.setErrorMessage("");
 			orderQueryRespVo.setStatus("1");
 			return orderQueryRespVo;
-		} else {
-			orderQueryRespVo.setErrorCode("E0002");
-			orderQueryRespVo.setErrorMessage("该商户号不存在或该商户无此订单!");
-			orderQueryRespVo.setStatus("0");
-			return orderQueryRespVo;
-		}
+//		} else {
+//			orderQueryRespVo.setErrorCode("E0002");
+//			orderQueryRespVo.setErrorMessage("该商户号不存在或该商户无此订单!");
+//			orderQueryRespVo.setStatus("0");
+//			return orderQueryRespVo;
+//		}
 	}
 
 	/**
@@ -167,9 +166,9 @@ public class OrderPayServiceImpl implements OrderPayService {
 	@Override
 	public QuickOrderRespVo doQuickOrder(QuickOrderReqVo quickOrderReqVo) {
 		StringBuffer errorMsg = new StringBuffer("");
-		if (checkBusNum(quickOrderReqVo.getBusNum(), PayChannel.E_2)) {
+//		if (checkBusNum(quickOrderReqVo.getBusNum(), PayType.E_2)) {
 			errorMsg.append("未开通该支付方式!");
-		}
+//		}
 		// 校验商户参数
 		errorMsg.append(checkRequest(quickOrderReqVo.getAmount(), "订单金额"));
 		errorMsg.append(checkRequest(quickOrderReqVo.getBusNum(), "商户号"));
@@ -202,11 +201,11 @@ public class OrderPayServiceImpl implements OrderPayService {
 		dynamicVerifyCodeRequestDTO.setAccountNo(quickOrderSMSReqVo.getUserAccount());
 //		dynamicVerifyCodeRequestDTO.setBankId(bankId);
 		dynamicVerifyCodeRequestDTO.setCvv2(quickOrderSMSReqVo.getCvv2());
-		dynamicVerifyCodeRequestDTO.setExpiredDate(quickOrderSMSReqVo.getExpiredDate());
+//		dynamicVerifyCodeRequestDTO.setExpiredDate(quickOrderSMSReqVo.getExpiredDate());
 		dynamicVerifyCodeRequestDTO.setIdNo(quickOrderSMSReqVo.getUserCerNum());
 		dynamicVerifyCodeRequestDTO.setIdType(quickOrderSMSReqVo.getUserCerType());
 		dynamicVerifyCodeRequestDTO.setTelePhone(quickOrderSMSReqVo.getUserMobile());
-		dynamicVerifyCodeRequestDTO.setUserTransactionNo(orderPayRequest.getPaySeriNo());
+//		dynamicVerifyCodeRequestDTO.setUserTransactionNo(orderPayRequest.getPaySeriNo());
 		DynamicVerifyCodeResponseDTO dynamicVerifyCodeResponseDTO=dynamicVerifyCodeService.getDynamicVerifyCode(dynamicVerifyCodeRequestDTO);
 		QuickOrderSMSRespVo quickOrderBodyRespVo = new QuickOrderSMSRespVo();
 		quickOrderBodyRespVo.setOrderNo(quickOrderSMSReqVo.getOrderNo());
@@ -246,34 +245,34 @@ public class OrderPayServiceImpl implements OrderPayService {
 		}
 		QueryParams queryParam = new QueryParams();
 		queryParam.put("orderNo", quickOrderPayReqVo.getOrderNo());
-		List<Order> orderList = orderRepo.findByParam(Order.class, queryParam);
-		if(CollectionUtils.isEmpty(orderList)){
-			quickOrderPayRespVo.setErrorCode("E0005");
-			quickOrderPayRespVo.setErrorMessage("该支付订单不存在");
-			quickOrderPayRespVo.setStatus("0");
-			return quickOrderPayRespVo;
-		}
-		Order order = orderList.get(0);
+//		List<Order> orderList = orderRepo.findByParam(Order.class, queryParam);
+//		if(CollectionUtils.isEmpty(orderList)){
+//			quickOrderPayRespVo.setErrorCode("E0005");
+//			quickOrderPayRespVo.setErrorMessage("该支付订单不存在");
+//			quickOrderPayRespVo.setStatus("0");
+//			return quickOrderPayRespVo;
+//		}
+//		Order order = orderList.get(0);
 		//校验快捷支付请求信息
-		errorMsg.append(checkQuickOrderPayReqVo(order,quickOrderPayReqVo));
-		if (!"".equals(errorMsg.toString())) {
-			quickOrderPayRespVo.setErrorCode("E0005");
-			quickOrderPayRespVo.setErrorMessage(errorMsg.toString());
-			quickOrderPayRespVo.setStatus("0");
-			return quickOrderPayRespVo;
-		}
-		if(PaymentStatus.PS_PAYING.equals(order.getOrderStatus())){
-			quickOrderPayRespVo.setErrorCode("");
-			quickOrderPayRespVo.setErrorMessage("订单支付中");
-			quickOrderPayRespVo.setStatus("3");
-			return quickOrderPayRespVo;
-		}
-		if(PaymentStatus.PS_SUCCESS.equals(order.getOrderStatus())){
-			quickOrderPayRespVo.setErrorCode("");
-			quickOrderPayRespVo.setErrorMessage("订单已支付成功");
-			quickOrderPayRespVo.setStatus("4");
-			return quickOrderPayRespVo;
-		}
+//		errorMsg.append(checkQuickOrderPayReqVo(order,quickOrderPayReqVo));
+//		if (!"".equals(errorMsg.toString())) {
+//			quickOrderPayRespVo.setErrorCode("E0005");
+//			quickOrderPayRespVo.setErrorMessage(errorMsg.toString());
+//			quickOrderPayRespVo.setStatus("0");
+//			return quickOrderPayRespVo;
+//		}
+//		if(PaymentStatus.PS_PAYING.equals(order.getOrderStatus())){
+//			quickOrderPayRespVo.setErrorCode("");
+//			quickOrderPayRespVo.setErrorMessage("订单支付中");
+//			quickOrderPayRespVo.setStatus("3");
+//			return quickOrderPayRespVo;
+//		}
+//		if(PaymentStatus.PS_SUCCESS.equals(order.getOrderStatus())){
+//			quickOrderPayRespVo.setErrorCode("");
+//			quickOrderPayRespVo.setErrorMessage("订单已支付成功");
+//			quickOrderPayRespVo.setStatus("4");
+//			return quickOrderPayRespVo;
+//		}
 		
 		//保存快捷支付流水
 		OrderPayRequest orderPayRequest =saveQuikcPayRequest(quickOrderPayReqVo);
@@ -281,8 +280,8 @@ public class OrderPayServiceImpl implements OrderPayService {
 		kuaiqianQuickPayRequestDTO.setCardHolderId(quickOrderPayReqVo.getUserCerNum());
 		kuaiqianQuickPayRequestDTO.setCardNo(quickOrderPayReqVo.getUserAccount());
 	 	kuaiqianQuickPayRequestDTO.setCvv2(quickOrderPayReqVo.getCvv2());
-	 	kuaiqianQuickPayRequestDTO.setExpiredDate(quickOrderPayReqVo.getExpiredDate());
-	 	kuaiqianQuickPayRequestDTO.setUserTransactionNo(orderPayRequest.getPaySeriNo());
+//	 	kuaiqianQuickPayRequestDTO.setExpiredDate(quickOrderPayReqVo.getExpiredDate());
+//	 	kuaiqianQuickPayRequestDTO.setUserTransactionNo(orderPayRequest.getPaySeriNo());
 	 	kuaiqianQuickPayRequestDTO.setIdType(quickOrderPayReqVo.getUserCerType());
 	 	kuaiqianQuickPayRequestDTO.setValidCode(quickOrderPayReqVo.getSmsCode());
 	 	kuaiqianQuickPayRequestDTO.setValidCode(quickOrderPayReqVo.getSmsCode());
@@ -322,13 +321,13 @@ public class OrderPayServiceImpl implements OrderPayService {
 		QueryParams queryParams = new QueryParams();
 		queryParams.put("busNum", busNum);
 		queryParams.put("payChannel", payChannel);
-		List<BusinessNum> businessNumList = businessNumRepo.findByBusNum(
-				BusinessNum.class, queryParams);
-		for (BusinessNum businessNum : businessNumList) {
-			if (payChannel.equals(businessNum.getPayChannel())) {
-				flag = false;
-			}
-		}
+////		List<BusinessNum> businessNumList = businessNumRepo.findByBusNum(
+//				BusinessNum.class, queryParams);
+//		for (BusinessNum businessNum : businessNumList) {
+//			if (payChannel.equals(businessNum.getPayChannel())) {
+//				flag = false;
+//			}
+//		}
 		return flag;
 	}
 
@@ -346,10 +345,10 @@ public class OrderPayServiceImpl implements OrderPayService {
 		return "";
 	}
 	
-	@Override
-	public Page<Order> page(QueryParams queryParams, Pageable pageable) {
-		return orderRepo.page(Order.class, queryParams, pageable);
-	}
+//	@Override
+//	public Page<Payment> page(QueryParams queryParams, Pageable pageable) {
+//		return paymentRepo.page(Payment.class, queryParams, pageable);
+//	}
 	
 	
 	/**
@@ -383,7 +382,7 @@ public class OrderPayServiceImpl implements OrderPayService {
 		orderPayRequest.setUserName(userName);
 		orderPayRequest.setUserMobile(userMobile);
 		// 保存商户支付请求
-		orderPayRequestRepo.save(orderPayRequest);
+//		orderPayRequestRepo.save(orderPayRequest);
 		return orderPayRequest;
 	}
 	
@@ -408,7 +407,7 @@ public class OrderPayServiceImpl implements OrderPayService {
 		orderPayRequest.setUserName(quickOrderPayReqVo.getUserName());
 		orderPayRequest.setUserMobile(quickOrderPayReqVo.getUserMobile());
 		// 保存商户支付请求
-		orderPayRequestRepo.save(orderPayRequest);
+//		orderPayRequestRepo.save(orderPayRequest);
 		return orderPayRequest;
 	}
 	
@@ -433,7 +432,7 @@ public class OrderPayServiceImpl implements OrderPayService {
 		orderPayRequest.setUserName(quickOrderSMSReqVo.getUserName());
 		orderPayRequest.setUserMobile(quickOrderSMSReqVo.getUserMobile());
 		// 保存商户支付请求
-		orderPayRequestRepo.save(orderPayRequest);
+//		orderPayRequestRepo.save(orderPayRequest);
 		return orderPayRequest;
 	}
 	
@@ -467,11 +466,11 @@ public class OrderPayServiceImpl implements OrderPayService {
 		order.setExt2(orderPayReqVo.getExt2());
 		order.setExt3(orderPayReqVo.getExt3());
 		order.setExt4(orderPayReqVo.getExt4());
-		if(order.getId()!=null){
-			orderRepo.update(order);
-		}else{
-			orderRepo.save(order);
-		}
+//		if(order.getId()!=null){
+//			orderRepo.update(order);
+//		}else{
+//			orderRepo.save(order);
+//		}
 		return order;
 	}
 	
@@ -501,7 +500,7 @@ public class OrderPayServiceImpl implements OrderPayService {
 		order.setOrderStatus(PaymentStatus.PS_WAITPAY);
 		String orderNo = getOrderNo();
 		order.setOrderNo(orderNo);
-		orderRepo.save(order);
+//		orderRepo.save(order);
 		return order;
 	}
 	/**

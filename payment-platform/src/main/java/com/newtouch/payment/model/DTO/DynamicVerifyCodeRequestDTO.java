@@ -1,11 +1,28 @@
 package com.newtouch.payment.model.DTO;
 
-public class DynamicVerifyCodeRequestDTO {
+import java.io.Serializable;
+
+public class DynamicVerifyCodeRequestDTO implements Serializable {
 	
 	/**
-	 * 支付流水号
+	 * 
 	 */
-	private String userTransactionNo;
+	private static final long serialVersionUID = -3493919456387989555L;
+
+	/**
+	 * 支付号
+	 */
+	private String paymentNo;
+	
+	/**
+	 * 平台
+	 */
+	private String platform;
+	
+	/**
+	 * 银行代码
+	 */
+	private String bankCode;
 	
 	/**
 	 * 持卡人姓名
@@ -18,9 +35,14 @@ public class DynamicVerifyCodeRequestDTO {
 	private String accountNo;
 	
 	/**
-	 * 有效期
+	 * 信用卡失效年份
 	 */
-	private String expiredDate;
+	private String expiredYear;
+	
+	/**
+	 * 信用卡失效月份
+	 */
+	private String expiredMonth;
 	
 	/**
 	 * 卡校验码
@@ -38,21 +60,32 @@ public class DynamicVerifyCodeRequestDTO {
 	private String idNo;
 	
 	/**
-	 * 银行代码
-	 */
-	private String bankId;
-	
-	/**
 	 * 手机号码
 	 */
 	private String telePhone;
-	
-	public String getUserTransactionNo() {
-		return userTransactionNo;
+
+	public String getPaymentNo() {
+		return paymentNo;
 	}
 
-	public void setUserTransactionNo(String userTransactionNo) {
-		this.userTransactionNo = userTransactionNo;
+	public void setPaymentNo(String paymentNo) {
+		this.paymentNo = paymentNo;
+	}
+
+	public String getPlatform() {
+		return platform;
+	}
+
+	public void setPlatform(String platform) {
+		this.platform = platform;
+	}
+
+	public String getBankCode() {
+		return bankCode;
+	}
+
+	public void setBankCode(String bankCode) {
+		this.bankCode = bankCode;
 	}
 
 	public String getAccountName() {
@@ -71,12 +104,20 @@ public class DynamicVerifyCodeRequestDTO {
 		this.accountNo = accountNo;
 	}
 
-	public String getExpiredDate() {
-		return expiredDate;
+	public String getExpiredYear() {
+		return expiredYear;
 	}
 
-	public void setExpiredDate(String expiredDate) {
-		this.expiredDate = expiredDate;
+	public void setExpiredYear(String expiredYear) {
+		this.expiredYear = expiredYear;
+	}
+
+	public String getExpiredMonth() {
+		return expiredMonth;
+	}
+
+	public void setExpiredMonth(String expiredMonth) {
+		this.expiredMonth = expiredMonth;
 	}
 
 	public String getCvv2() {
@@ -103,14 +144,6 @@ public class DynamicVerifyCodeRequestDTO {
 		this.idNo = idNo;
 	}
 
-	public String getBankId() {
-		return bankId;
-	}
-
-	public void setBankId(String bankId) {
-		this.bankId = bankId;
-	}
-
 	public String getTelePhone() {
 		return telePhone;
 	}
@@ -118,5 +151,5 @@ public class DynamicVerifyCodeRequestDTO {
 	public void setTelePhone(String telePhone) {
 		this.telePhone = telePhone;
 	}
-
+	
 }

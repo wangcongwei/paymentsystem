@@ -5,6 +5,7 @@ import org.springframework.data.domain.Pageable;
 
 import com.newtouch.common.model.QueryParams;
 import com.newtouch.payment.model.Order;
+import com.newtouch.payment.model.Payment;
 import com.newtouch.payment.view.model.orderpay.OrderPayReqVo;
 import com.newtouch.payment.view.model.orderpay.OrderPayRespVo;
 import com.newtouch.payment.view.model.orderquery.OrderQueryReqVo;
@@ -57,14 +58,6 @@ public interface OrderPayService {
 	 */
 	public String getOrderNo();
 	
-	/**
-	 * 查询Order
-	 * 
-	 * @param Order
-	 * @param pageable
-	 * @return
-	 */
-	Page<Order> page(QueryParams queryParams, Pageable pageable);
 	
 	
 }

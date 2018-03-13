@@ -1,4 +1,4 @@
-package com.newtouch.payment.view.orderpay;
+package com.newtouch.payment.view.payment;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +16,7 @@ import com.newtouch.common.view.ReqModel;
 import com.newtouch.common.view.RespModel;
 import com.newtouch.demo.service.CurdService;
 import com.newtouch.payment.model.Order;
+import com.newtouch.payment.model.Payment;
 import com.newtouch.payment.service.OrderPayService;
 import com.newtouch.payment.view.model.orderpay.OrderPayReqVo;
 import com.newtouch.payment.view.model.orderpay.OrderPayRespVo;
@@ -39,31 +40,31 @@ import com.newtouch.payment.view.model.quickorderpay.QuickOrderPayRespVo;
 
 @RequestMapping(value = "/orderpay/netpay")
 @Controller
-public class OrderPayController{
-	private static Logger logger = LoggerFactory.getLogger(OrderPayController.class);
+public class PaymentController{
+	private static Logger logger = LoggerFactory.getLogger(PaymentController.class);
 	@Autowired
 	private CurdService curdService;
 	
 	@Autowired
 	private OrderPayService orderPayService;
 	
-	/**
-	 * ajax 列表查询 查询
-	 * 
-	 * @param reqModel
-	 *            请求模型
-	 * @return json数据
-	 */
-	@ResponseBody
-	@RequestMapping(value = "/orderListQuery", consumes = "application/json", produces = "application/json", method = RequestMethod.POST)
-	public RespModel orderListQuery(@RequestBody ReqModel reqModel) {
-		Pageable pageable = reqModel.getPageable();
-		QueryParams queryParams = reqModel.getQueryParams();
-		logger.trace("pagePageNumber={}", pageable.getPageNumber());
-		logger.trace("queryParams={}", queryParams);
-		Page<Order> orderPage = orderPayService.page(queryParams, pageable);
-		return new RespModel(orderPage);
-	}
+//	/**
+//	 * ajax 列表查询 查询
+//	 * 
+//	 * @param reqModel
+//	 *            请求模型
+//	 * @return json数据
+//	 */
+//	@ResponseBody
+//	@RequestMapping(value = "/orderListQuery", consumes = "application/json", produces = "application/json", method = RequestMethod.POST)
+//	public RespModel orderListQuery(@RequestBody ReqModel reqModel) {
+//		Pageable pageable = reqModel.getPageable();
+//		QueryParams queryParams = reqModel.getQueryParams();
+//		logger.trace("pagePageNumber={}", pageable.getPageNumber());
+//		logger.trace("queryParams={}", queryParams);
+////		Page<Order> orderPage = orderPayService.page(queryParams, pageable);
+//		return new RespModel(new Page<Payment>());
+//	}
 	
 	/**
 	 * 订单支付,返回订单支付号

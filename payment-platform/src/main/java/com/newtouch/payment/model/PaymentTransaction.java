@@ -117,6 +117,12 @@ public class PaymentTransaction extends BaseEntity {
 	private String bankName;
 	
 	/**
+	 * 手机号
+	 */
+	@Column(name = "TELEPHONE")
+	private String telePhone;
+	
+	/**
 	 * 请求流水
 	 */
 	@Column(name = "REQ_NO")
@@ -134,6 +140,12 @@ public class PaymentTransaction extends BaseEntity {
 	@ManyToOne()
 	@JoinColumn(name = "PAYMENT_ID")
 	private Payment payment;
+	
+	/**
+	 * 请求返回信息
+	 */
+	@Column(name = "RESPONSE_MESSAGE")
+	private String responseMessage;
 	
 	/**
 	 * 更新时间
@@ -269,6 +281,14 @@ public class PaymentTransaction extends BaseEntity {
 		this.bankName = bankName;
 	}
 
+	public String getTelePhone() {
+		return telePhone;
+	}
+
+	public void setTelePhone(String telePhone) {
+		this.telePhone = telePhone;
+	}
+
 	public String getReqNo() {
 		return reqNo;
 	}
@@ -291,6 +311,14 @@ public class PaymentTransaction extends BaseEntity {
 
 	public void setPayment(Payment payment) {
 		this.payment = payment;
+	}
+
+	public String getResponseMessage() {
+		return responseMessage;
+	}
+
+	public void setResponseMessage(String responseMessage) {
+		this.responseMessage = responseMessage;
 	}
 
 	public String getUpdateTime() {

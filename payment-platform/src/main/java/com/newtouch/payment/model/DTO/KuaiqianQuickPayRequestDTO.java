@@ -3,14 +3,34 @@ package com.newtouch.payment.model.DTO;
 public class KuaiqianQuickPayRequestDTO {
 	
 	/**
+	 * 支付号
+	 */
+	private String paymentNo;
+	
+	/**
+	 * 银行代码
+	 */
+	private String bankCode;
+	
+	/**
+	 * 账户名
+	 */
+	private String accountName;
+	
+	/**
 	 * 卡号
 	 */
 	private String cardNo;
 	
 	/**
-	 * 卡有效期
+	 * 卡有效期 年
 	 */
-	private String expiredDate;
+	private String expiredYear;
+	
+	/**
+	 * 卡有效期 月
+	 */
+	private String expiredMonth;
 	
 	/**
 	 * 卡检验码
@@ -28,14 +48,38 @@ public class KuaiqianQuickPayRequestDTO {
 	private String idType;
 	
 	/**
-	 * 支付流水号
+	 * 手机号
 	 */
-	private String userTransactionNo;
+	private String telePhone;
 	
 	/**
 	 * 手机验证码
 	 */
 	private String validCode;
+
+	public String getPaymentNo() {
+		return paymentNo;
+	}
+
+	public void setPaymentNo(String paymentNo) {
+		this.paymentNo = paymentNo;
+	}
+
+	public String getBankCode() {
+		return bankCode;
+	}
+
+	public void setBankCode(String bankCode) {
+		this.bankCode = bankCode;
+	}
+
+	public String getAccountName() {
+		return accountName;
+	}
+
+	public void setAccountName(String accountName) {
+		this.accountName = accountName;
+	}
 
 	public String getCardNo() {
 		return cardNo;
@@ -45,12 +89,20 @@ public class KuaiqianQuickPayRequestDTO {
 		this.cardNo = cardNo;
 	}
 
-	public String getExpiredDate() {
-		return expiredDate;
+	public String getExpiredYear() {
+		return expiredYear;
 	}
 
-	public void setExpiredDate(String expiredDate) {
-		this.expiredDate = expiredDate;
+	public void setExpiredYear(String expiredYear) {
+		this.expiredYear = expiredYear;
+	}
+
+	public String getExpiredMonth() {
+		return expiredMonth;
+	}
+
+	public void setExpiredMonth(String expiredMonth) {
+		this.expiredMonth = expiredMonth;
 	}
 
 	public String getCvv2() {
@@ -77,12 +129,12 @@ public class KuaiqianQuickPayRequestDTO {
 		this.idType = idType;
 	}
 
-	public String getUserTransactionNo() {
-		return userTransactionNo;
+	public String getTelePhone() {
+		return telePhone;
 	}
 
-	public void setUserTransactionNo(String userTransactionNo) {
-		this.userTransactionNo = userTransactionNo;
+	public void setTelePhone(String telePhone) {
+		this.telePhone = telePhone;
 	}
 
 	public String getValidCode() {
@@ -92,6 +144,5 @@ public class KuaiqianQuickPayRequestDTO {
 	public void setValidCode(String validCode) {
 		this.validCode = validCode;
 	}
-	
-	
+
 }

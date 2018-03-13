@@ -143,7 +143,7 @@ public class Payment extends BaseEntity {
 	 * 更新时间
 	 */
 	@Column(name = "UPDATE_TIME")
-	private String updateTime;
+	private Date updateTime;
 
 	public Long getId() {
 		return id;
@@ -305,11 +305,11 @@ public class Payment extends BaseEntity {
 		this.isvalid = isvalid;
 	}
 
-	public String getUpdateTime() {
+	public Date getUpdateTime() {
 		return updateTime;
 	}
 
-	public void setUpdateTime(String updateTime) {
+	public void setUpdateTime(Date updateTime) {
 		this.updateTime = updateTime;
 	}
 	

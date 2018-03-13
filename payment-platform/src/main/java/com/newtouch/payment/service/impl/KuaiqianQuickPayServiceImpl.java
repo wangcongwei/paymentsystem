@@ -38,14 +38,16 @@ import org.springframework.stereotype.Service;
 import com.newtouch.common.model.QueryParams;
 import com.newtouch.payment.constant.CommonConst;
 import com.newtouch.payment.exception.ServiceException;
-import com.newtouch.payment.model.Order;
-import com.newtouch.payment.model.OrderPayRequest;
-import com.newtouch.payment.model.TPayPlatformTransation;
+import com.newtouch.payment.im.PayType;
+import com.newtouch.payment.im.PaymentStatus;
+import com.newtouch.payment.im.PaymentTransactionStatus;
+import com.newtouch.payment.im.Platform;
+import com.newtouch.payment.model.Payment;
+import com.newtouch.payment.model.PaymentTransaction;
 import com.newtouch.payment.model.DTO.KuaiqianQuickPayRequestDTO;
 import com.newtouch.payment.model.DTO.KuaiqianQuickPayResponseDTO;
-import com.newtouch.payment.repository.OrderPayRequestRepo;
-import com.newtouch.payment.repository.OrderRepo;
-import com.newtouch.payment.repository.PayPlatformTransactionRepo;
+import com.newtouch.payment.repository.PaymentRepo;
+import com.newtouch.payment.repository.PaymentTransactionRepo;
 import com.newtouch.payment.service.KuaiqianQuickPayService;
 import com.newtouch.payment.utils.PropFile;
 import com.newtouch.payment.utils.StreamUtil;
@@ -71,11 +73,9 @@ public class KuaiqianQuickPayServiceImpl implements KuaiqianQuickPayService {
 	@Resource(name = "ehcacheManager")
 	private CacheManager ehcacheManager;
 	@Autowired
-	private PayPlatformTransactionRepo payPlatformTransactionRepo;
+	private PaymentTransactionRepo paymentTransactionRepo;
 	@Autowired
-	private OrderRepo orderRepo;
-	@Autowired
-	private OrderPayRequestRepo orderPayRequestRepo;
+	private PaymentRepo paymentRepo;
 
 	private HttpsURLConnection urlc = null;
 
@@ -112,117 +112,120 @@ public class KuaiqianQuickPayServiceImpl implements KuaiqianQuickPayService {
 
 	}
 
-	private TPayPlatformTransation saveRequestMsg(KuaiqianQuickPayRequestDTO request) {
+	private PaymentTransaction saveRequestMsg(KuaiqianQuickPayRequestDTO request) {
 		// 根据支付流水好查询订单信息
 		QueryParams queryParams = new QueryParams();
-		queryParams.put("paySeriNo", request.getUserTransactionNo());
-		OrderPayRequest orderPayRequest = orderPayRequestRepo.findByPaySeriNo(OrderPayRequest.class, queryParams);
-		queryParams.put("orderNo", orderPayRequest.getOrderNo());
-		Order order = orderRepo.findByOrderNo(Order.class, queryParams);
+		queryParams.put("paymentNo", request.getPaymentNo());
+		Payment payment = paymentRepo.findOneByParam(Payment.class, queryParams);
 
 		// 创建支付交易记录
-		TPayPlatformTransation tppt = new TPayPlatformTransation();
-		tppt.setAccountName(orderPayRequest.getUserName());
-		tppt.setAccountno(request.getCardNo());
-		tppt.setValiddate(request.getExpiredDate());
-		tppt.setCcv2(request.getCvv2());
-		tppt.setAmount(Double.valueOf(order.getAmount().doubleValue()));
-		tppt.setIdType(request.getIdType());
-		tppt.setIdNo(request.getCardHolderId());
-		tppt.setVerifycode(request.getValidCode());
-		tppt.setCreateDate(new Date());
-		tppt.setPayTime(new Date());
-		tppt.setCurrency("CNY");
-		tppt.setMobile(orderPayRequest.getUserMobile());
-		tppt.setOrderNo(order.getOrderNo());
-		tppt.setReqNo(request.getUserTransactionNo());
-		tppt.setStatus("CREATE");
-		order.setOrderStatus("3");
-		orderRepo.update(order);
-		payPlatformTransactionRepo.save(tppt);
+		PaymentTransaction pt = new PaymentTransaction();
+		payment.setPaymentStatus(PaymentStatus.PS_PAYING);
+		payment.setCurrency(CommonConst.CURRENCY);
+		pt.setPayment(payment);
+		pt.setPaymentAmount(payment.getPaymentAmount());
+		pt.setPaymentNo(payment.getPaymentNo());
+		pt.setReqNo(payment.getPaymentNo());
+		pt.setStatus(PaymentTransactionStatus.CREATE);
+		pt.setPlatform(Platform.KUAIQIAN);
+		pt.setPayType(PayType.QUICK);
+		pt.setCardNo(request.getCardNo());
+		if (StringUtils.isNotBlank(request.getExpiredMonth()) && StringUtils.isNotBlank(request.getExpiredYear())) {
+			pt.setExpireDate(request.getExpiredMonth() + request.getExpiredYear());
+		}
+		pt.setCvv(request.getCvv2());
+		pt.setBankCode(request.getBankCode());
+		pt.setTelePhone(request.getTelePhone());
+		paymentRepo.update(payment);
+		paymentTransactionRepo.save(pt);
 
-		return tppt;
+		return pt;
 	}
 
 	@Override
 	public KuaiqianQuickPayResponseDTO quickPay(KuaiqianQuickPayRequestDTO request) {
-		TPayPlatformTransation tppt = this.saveRequestMsg(request);
-		return this.quickPay(tppt);
+		QueryParams queryParams = new QueryParams();
+		queryParams.put("paymentNo", request.getPaymentNo());
+		Payment payment = paymentRepo.findOneByParam(Payment.class, queryParams);
+		if (PaymentStatus.PS_NOEFFITIVE.equals(payment.getPaymentStatus())) {
+			throw new ServiceException("支付号已失效，无法支付！");
+		}
+		if (!PaymentStatus.PS_WAITPAY.equals(payment.getPaymentStatus()) && !PaymentStatus.PS_PAYING.equals(payment.getPaymentStatus())) {
+			throw new ServiceException("此支付号已支付过，请勿重复支付！");
+		}
+		PaymentTransaction pt = this.saveRequestMsg(request);
+		return this.quickPay(pt, request);
 	}
 
 	@Override
-	public KuaiqianQuickPayResponseDTO quickPay(TPayPlatformTransation tppt) {
+	public KuaiqianQuickPayResponseDTO quickPay(PaymentTransaction pt, KuaiqianQuickPayRequestDTO request) {
 
 		KuaiqianQuickPayResponseDTO response = new KuaiqianQuickPayResponseDTO();
 		// 封装支付请求信息
-		String requestMsg = this.createRequestMsg(tppt);
+		String requestMsg = this.createRequestMsg(pt,request);
 		// 发送请求信息
 		Map<String, String> resMap = this.sendQuickPayRequest(requestMsg);
 
 		// 快钱tr2应答码如果为C0则表示非实时到款，返回支付成功，等待快钱TR3 到款通知，生效服务。如果非C0则表示实时到款操作
 		response.setErrorCode("0");
-		response.setOrderNo(tppt.getOrderNo());
-		response.setOrderAmount(tppt.getAmount().toString());
 		if ("C0".equals(resMap.get("responseCode"))) {
-			tppt.setEnable_time(DateUtils.addHours(new Date(), 24));
-			tppt.setQuery_time(DateUtils.addMilliseconds(new Date(), 15));
-			tppt.setQuery_times(0);
-			payPlatformTransactionRepo.update(tppt);
+			response.setErrorCode("9");
+			response.setErrorMessage("待通知支付状态");
 			return response;
 		}
 		// 返回非成功状态
 		if (!"00".equals(resMap.get("responseCode"))) {
 			response.setErrorCode("9");
 			if (resMap.get("responseCode") == null) {
-				tppt.setMessagecode(resMap.get("errorCode"));
-				tppt.setMessage(resMap.get("errorMessage"));
+				pt.setResponseMessage(resMap.get("errorMessage"));
 				response.setResponseCode(resMap.get("errorCode"));
 				response.setErrorMessage(resMap.get("errorMessage"));
 			} else {
-				tppt.setMessagecode(resMap.get("responseCode"));
-				tppt.setMessage(resMap.get("responseTextMessage"));
+				pt.setResponseMessage(resMap.get("responseTextMessage"));
 				response.setResponseCode(resMap.get("responseCode"));
 				response.setErrorMessage(resMap.get("responseTextMessage"));
 			}
-			tppt.setStatus("FAILED");
-			payPlatformTransactionRepo.update(tppt);
+			pt.setStatus("FAILED");
+			paymentTransactionRepo.update(pt);
 			return response;
 		}
-		tppt.setStatus("SUCCESS");
-		if (!(tppt.getReqNo()).equals(resMap.get("externalRefNumber"))) {
-			tppt.setMessage("已支付但支付返回的单号不一致。");
+		if (!(pt.getPaymentNo()).equals(resMap.get("externalRefNumber"))) {
+			pt.setResponseMessage("已支付但支付返回的单号不一致。");
 			response.setErrorCode("2");
 			response.setErrorMessage("已支付但支付返回的单号不一致。");
-			payPlatformTransactionRepo.update(tppt);
+			paymentTransactionRepo.update(pt);
 			return response;
 		}
-		if (BigDecimal.valueOf(Double.valueOf(tppt.getAmount())).setScale(2, BigDecimal.ROUND_HALF_UP).compareTo(
+		if (BigDecimal.valueOf(pt.getPaymentAmount()).setScale(2, BigDecimal.ROUND_HALF_UP).compareTo(
 				BigDecimal.valueOf(Double.valueOf(resMap.get("amount"))).setScale(2, BigDecimal.ROUND_HALF_UP)) != 0) {
 
-			tppt.setMessage("已支付但支付金额不一致。");
+			pt.setResponseMessage("已支付但支付金额不一致。");
 			response.setErrorCode("2");
 			response.setErrorMessage("已支付但支付金额不一致。");
-			payPlatformTransactionRepo.update(tppt);
+			paymentTransactionRepo.update(pt);
 			return response;
 		}
 		try {
 			Double payAmount = BigDecimal.valueOf(Double.valueOf(resMap.get("amount")))
 					.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
 			Date dealTime = DateUtils.parseDate(resMap.get("transTime"), new String[]{CommonConst.datePatternyyyyMMddHHmmss});
-			Date now = new Date();
-			tppt.setResNo(resMap.get("refNumber"));
-			tppt.setReturnTime(now);
-			tppt.setPaysuccessTime(dealTime);
-			tppt.setPayAmount(payAmount);
-			tppt.setStorableCardNo(resMap.get("storableCardNo"));
-			tppt.setCardOrg(resMap.get("cardOrg")); // 卡组织编号
-			tppt.setIssuer(resMap.get("issuer")); // 发卡银行名称
-			// 订单表数据组装
-			Order order = new Order();
-			order.setOrderStatus("4"); // 支付成功
-			order.setUpdateTime(now);
-			payPlatformTransactionRepo.update(tppt);
-			orderRepo.update(order);
+			pt.setStatus("SUCCESS");
+			pt.setDealNo(resMap.get("refNumber"));
+			pt.setPayTime(dealTime);
+			pt.setPayAmount(payAmount);
+			pt.setCardNo(resMap.get("storableCardNo"));
+			pt.setBankCode(resMap.get("cardOrg"));
+			pt.setBankName(resMap.get("issuer"));
+			Payment payment = pt.getPayment();
+			payment.setDealNo(resMap.get("refNumber"));
+			payment.setPayTime(dealTime);
+			payment.setPayAmount(payAmount);
+			payment.setPaymentStatus(PaymentStatus.PS_SUCCESS);
+			payment.setMerchantNo(resMap.get("merchantId"));
+			payment.setPlatform(pt.getPlatform());
+			payment.setPayType(pt.getPayType());
+			paymentTransactionRepo.update(pt);
+			paymentRepo.update(payment);
 		} catch (Exception e) {
 			response.setErrorCode("1");
 			response.setErrorMessage("已支付但支付信息数据处理失败。");
@@ -232,7 +235,7 @@ public class KuaiqianQuickPayServiceImpl implements KuaiqianQuickPayService {
 		return response;
 	}
 
-	private String createRequestMsg(TPayPlatformTransation tppt) {
+	private String createRequestMsg(PaymentTransaction pt, KuaiqianQuickPayRequestDTO request) {
 		Document document = DocumentHelper.createDocument();
 		// 创建一个根节点
 		Element masMessage = document.addElement("MasMessage", "http://www.99bill.com/mas_cnp_merchant_interface");
@@ -243,51 +246,50 @@ public class KuaiqianQuickPayServiceImpl implements KuaiqianQuickPayService {
 		// 消息状态
 		msgContent.addElement("interactiveStatus").setText("TR1");
 		// 卡号
-		if (StringUtils.isNotBlank(tppt.getAccountno()))
-			msgContent.addElement("cardNo").setText(tppt.getAccountno());
+		if (StringUtils.isNotBlank(pt.getCardNo()))
+			msgContent.addElement("cardNo").setText(pt.getCardNo());
 		// 卡效期
-		if (StringUtils.isNotBlank(tppt.getValiddate()))
-			msgContent.addElement("expiredDate").setText(tppt.getValiddate());
+		if (StringUtils.isNotBlank(pt.getExpireDate()))
+			msgContent.addElement("expiredDate").setText(pt.getExpireDate());
 		// 卡校验码
-		if (StringUtils.isNotBlank(tppt.getCcv2()))
-			msgContent.addElement("cvv2").setText(tppt.getCcv2());
+		if (StringUtils.isNotBlank(pt.getCvv()))
+			msgContent.addElement("cvv2").setText(pt.getCvv());
 		// 金额
-		msgContent.addElement("amount")
-				.setText(BigDecimal.valueOf(tppt.getAmount()).setScale(2, BigDecimal.ROUND_HALF_UP).toString());
+		msgContent.addElement("amount").setText(BigDecimal.valueOf(pt.getPaymentAmount()).setScale(2, BigDecimal.ROUND_HALF_UP).toString());
 		// 商户号
 		msgContent.addElement("merchantId").setText(merchantId);
 		// 终端号
 		msgContent.addElement("terminalId").setText(terminalId);
 		// 持卡人姓名
-		if (StringUtils.isNotBlank(tppt.getAccountName()))
-			msgContent.addElement("cardHolderName").setText(tppt.getAccountName());
+		if (StringUtils.isNotBlank(request.getAccountName()))
+			msgContent.addElement("cardHolderName").setText(request.getAccountName());
 		// 持卡人证件号
-		if (StringUtils.isNotBlank(tppt.getIdNo()))
-			msgContent.addElement("cardHolderId").setText(tppt.getIdNo());
+		if (StringUtils.isNotBlank(request.getCardHolderId()))
+			msgContent.addElement("cardHolderId").setText(request.getCardHolderId());
 		// 证件类型
-		if (StringUtils.isNotBlank(tppt.getIdType())) {
-			msgContent.addElement("idType").setText(tppt.getIdType());
+		if (StringUtils.isNotBlank(request.getIdType())) {
+			msgContent.addElement("idType").setText(request.getIdType());
 		}
 		// 商户端交易时间
 		String txnTime = DateFormatUtils.format(new Date(), CommonConst.datePatternyyyyMMddHHmmss);
 		msgContent.addElement("entryTime").setText(txnTime);
 		// 外部跟踪编号
-		msgContent.addElement("externalRefNumber").setText(tppt.getReqNo());
+		msgContent.addElement("externalRefNumber").setText(pt.getPaymentNo());
 		// 特殊交易标志 QuickPay快捷支付
 		msgContent.addElement("spFlag").setText("QuickPay");
 		// 快捷支付模式下 extDate 包含一下字段
 		Element extMap = msgContent.addElement("extMap");
 		// 手机号
-		if (StringUtils.isNotBlank(tppt.getMobile())) {
+		if (StringUtils.isNotBlank(pt.getTelePhone())) {
 			Element ext = extMap.addElement("extDate");
 			ext.addElement("key").setText("phone");
-			ext.addElement("value").setText(tppt.getMobile());
+			ext.addElement("value").setText(pt.getTelePhone());
 		}
 		// 手机验证码
-		if (StringUtils.isNotBlank(tppt.getVerifycode())) {
+		if (StringUtils.isNotBlank(request.getValidCode())) {
 			Element ext = extMap.addElement("extDate");
 			ext.addElement("key").setText("validCode");
-			ext.addElement("value").setText(tppt.getVerifycode());
+			ext.addElement("value").setText(request.getValidCode());
 		}
 		// 不保存鉴权信息
 		{
@@ -300,7 +302,7 @@ public class KuaiqianQuickPayServiceImpl implements KuaiqianQuickPayService {
 			Element ext = extMap.addElement("extDate");
 			ext.addElement("key").setText("token");
 //			 String token = (String)phoneTokenCache.getObjectFromCache("token_"+ tppt.getOrderNo());
-			 String token = ehcacheManager.getCache("ODCache").get("token_"+ tppt.getOrderNo()).toString();
+			 String token = ehcacheManager.getCache("ODCache").get("token_"+ pt.getPaymentNo()).toString();
 //			String token = "1163702";
 			ext.addElement("value").setText(token == null ? "" : token);
 		}
