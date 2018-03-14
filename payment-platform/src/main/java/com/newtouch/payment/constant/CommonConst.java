@@ -81,4 +81,7 @@ public class CommonConst {
 	/** 验证码 */
 	public static final String CHECKNO = "checkNo";
 	
+	/** 商户号 */
+	public static final String MERCHANTID = "merchantId";
+	
 }
