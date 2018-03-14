@@ -1,11 +1,26 @@
 package com.newtouch.payment.model.DTO;
 
-public class KuaiqianQuickPayRequestDTO {
+public class KuaiqianRequestDTO {
+	
+	/**
+	 * 服务消费方
+	 */
+	private String consumerID;
+	
+	/**
+	 * 渠道代码
+	 */
+	private String comCode;
 	
 	/**
 	 * 支付号
 	 */
 	private String paymentNo;
+	
+	/**
+	 * 卡类型
+	 */
+	private String cardType;
 	
 	/**
 	 * 银行代码
@@ -56,6 +71,22 @@ public class KuaiqianQuickPayRequestDTO {
 	 * 手机验证码
 	 */
 	private String validCode;
+	
+	public String getConsumerID() {
+		return consumerID;
+	}
+
+	public void setConsumerID(String consumerID) {
+		this.consumerID = consumerID;
+	}
+
+	public String getComCode() {
+		return comCode;
+	}
+
+	public void setComCode(String comCode) {
+		this.comCode = comCode;
+	}
 
 	public String getPaymentNo() {
 		return paymentNo;
@@ -63,6 +94,14 @@ public class KuaiqianQuickPayRequestDTO {
 
 	public void setPaymentNo(String paymentNo) {
 		this.paymentNo = paymentNo;
+	}
+
+	public String getCardType() {
+		return cardType;
+	}
+
+	public void setCardType(String cardType) {
+		this.cardType = cardType;
 	}
 
 	public String getBankCode() {

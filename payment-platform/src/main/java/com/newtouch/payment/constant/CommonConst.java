@@ -30,8 +30,14 @@ public class CommonConst {
 	/** 常量1 */
 	public static final String CONST_ONE = "1";
 	
-	/** 常量1 */
+	/** 常量0 */
 	public static final String CONST_ZERO = "0";
+	
+	/** 借记卡 */
+	public static final String DEBIT = "D";
+	
+	/** 贷记卡 */
+	public static final String CREDIT = "C";
 	
 	/** 币种 */
 	public static final String CURRENCY = "CNY";

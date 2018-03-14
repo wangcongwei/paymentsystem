@@ -44,7 +44,7 @@ import com.newtouch.payment.im.PaymentTransactionStatus;
 import com.newtouch.payment.im.Platform;
 import com.newtouch.payment.model.Payment;
 import com.newtouch.payment.model.PaymentTransaction;
-import com.newtouch.payment.model.DTO.KuaiqianQuickPayRequestDTO;
+import com.newtouch.payment.model.DTO.KuaiqianRequestDTO;
 import com.newtouch.payment.model.DTO.KuaiqianQuickPayResponseDTO;
 import com.newtouch.payment.repository.PaymentRepo;
 import com.newtouch.payment.repository.PaymentTransactionRepo;
@@ -112,7 +112,7 @@ public class KuaiqianQuickPayServiceImpl implements KuaiqianQuickPayService {
 
 	}
 
-	private PaymentTransaction saveRequestMsg(KuaiqianQuickPayRequestDTO request) {
+	private PaymentTransaction saveRequestMsg(KuaiqianRequestDTO request) {
 		// 根据支付流水好查询订单信息
 		QueryParams queryParams = new QueryParams();
 		queryParams.put("paymentNo", request.getPaymentNo());
@@ -143,7 +143,7 @@ public class KuaiqianQuickPayServiceImpl implements KuaiqianQuickPayService {
 	}
 
 	@Override
-	public KuaiqianQuickPayResponseDTO quickPay(KuaiqianQuickPayRequestDTO request) {
+	public KuaiqianQuickPayResponseDTO quickPay(KuaiqianRequestDTO request) {
 		QueryParams queryParams = new QueryParams();
 		queryParams.put("paymentNo", request.getPaymentNo());
 		Payment payment = paymentRepo.findOneByParam(Payment.class, queryParams);
@@ -158,7 +158,7 @@ public class KuaiqianQuickPayServiceImpl implements KuaiqianQuickPayService {
 	}
 
 	@Override
-	public KuaiqianQuickPayResponseDTO quickPay(PaymentTransaction pt, KuaiqianQuickPayRequestDTO request) {
+	public KuaiqianQuickPayResponseDTO quickPay(PaymentTransaction pt, KuaiqianRequestDTO request) {
 
 		KuaiqianQuickPayResponseDTO response = new KuaiqianQuickPayResponseDTO();
 		// 封装支付请求信息
@@ -235,7 +235,7 @@ public class KuaiqianQuickPayServiceImpl implements KuaiqianQuickPayService {
 		return response;
 	}
 
-	private String createRequestMsg(PaymentTransaction pt, KuaiqianQuickPayRequestDTO request) {
+	private String createRequestMsg(PaymentTransaction pt, KuaiqianRequestDTO request) {
 		Document document = DocumentHelper.createDocument();
 		// 创建一个根节点
 		Element masMessage = document.addElement("MasMessage", "http://www.99bill.com/mas_cnp_merchant_interface");

@@ -276,4 +276,40 @@
 			</basic>
 		</attributes>
 	</entity>
+	<entity class="Merchant">
+		<table name="T_MERCHANT" />
+		<attributes>
+			<id name="id">
+				<column name="ID" unique="true" nullable="false"/>
+				<generated-value strategy="IDENTITY" />
+			</id>
+			<basic name="createDate">
+				<column name="CREATE_DATE"/>
+			</basic>
+			<basic name="merchantId">
+				<column name="MERCHANT_ID"/>
+			</basic>
+			<basic name="merchantName">
+				<column name="MERCHANT_NAME"/>
+			</basic>
+			<basic name="status">
+				<column name="STATUS"/>
+			</basic>
+			<basic name="macKey">
+				<column name="MAC_KEY"/>
+			</basic>
+			<basic name="platfromCode">
+				<column name="PLATFORM_CODE"/>
+			</basic>
+			<basic name="platformName">
+				<column name="PLATFORM_NAME"/>
+			</basic>
+			<basic name="payTypeCode">
+				<column name="PAY_TYPE_CODE"/>
+			</basic>
+			<basic name="payTypeName">
+				<column name="PAY_TYPE_NAME"/>
+			</basic>
+		</attributes>
+	</entity>
 </entity-mappings>
