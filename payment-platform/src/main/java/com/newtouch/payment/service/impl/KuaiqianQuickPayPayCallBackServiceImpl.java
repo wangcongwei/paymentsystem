@@ -15,27 +15,24 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
-import com.ccic.eb.common.constant.Constant;
-import com.ccic.eb.constant.payment.OrderStatus;
-import com.ccic.eb.constant.payment.SponsorSystem;
-import com.ccic.eb.constant.payment.TransType;
-import com.ccic.eb.model.payment.Payment;
-import com.ccic.eb.model.payment.PaymentApplication;
-import com.ccic.eb.service.onlinepayment.PayNoService;
-import com.ccic.eb.service.onlinepayment.kuaiqianpayment.TransErrorService;
-import com.ccic.eb.service.onlinepayment.support.combill99mgw.send.InitTrans;
-import com.ccic.eb.service.onlinepayment.support.combill99mgw.util.ParseUtil;
-import com.ccic.eb.service.onlinepayment.support.combill99mgw.util.SignUtil;
-import com.ccic.eb.service.paycallback.NotifyPayResultService;
-import com.ccic.eb.service.paycallback.exception.CallBackBussinessException;
-import com.ccic.eb.service.paycallback.kuaiqianpaycallback.KuaiqianNoCardCallBackProcessService;
-import com.ccic.eb.service.paycallback.kuaiqianpaycallback.KuaiqianPayCallBackService;
-import com.newtouch.lightframework.service.exception.ServiceException;
+import com.newtouch.common.model.QueryParams;
+import com.newtouch.payment.constant.CommonConst;
+import com.newtouch.payment.exception.ServiceException;
+import com.newtouch.payment.im.PaymentStatus;
+import com.newtouch.payment.model.Payment;
+import com.newtouch.payment.repository.PaymentRepo;
+import com.newtouch.payment.service.KuaiqianPayCallBackService;
+import com.newtouch.payment.service.KuaiqianQuickPayCallBackProcessService;
+import com.newtouch.payment.service.kuaiqian.support.send.InitTrans;
+import com.newtouch.payment.service.kuaiqian.support.util.ParseUtil;
+import com.newtouch.payment.service.kuaiqian.support.util.SignUtil;
+
 
 /**
  * <p>
@@ -53,29 +50,24 @@ import com.newtouch.lightframework.service.exception.ServiceException;
  */
 @Service("kuaiqianNoCardCallBackService")
 public class KuaiqianQuickPayPayCallBackServiceImpl implements KuaiqianPayCallBackService {
-	private final static Log log = LogFactory.getLog(KuaiqianOnlinePayCallBackServiceImpl.class);
-	@Resource(name = "payNoService")
-	private PayNoService payNoService;
-	@Resource(name = "notifyPayResultService")
-	private NotifyPayResultService notifyPayResultService;
+	private final static Logger logger = LoggerFactory.getLogger(KuaiqianQuickPayPayCallBackServiceImpl.class);
 	@Resource
-	private TransErrorService transErrorService;
-	@Resource
-	private KuaiqianNoCardCallBackProcessService kuaiqianNoCardCallBackProcessService;
+	private KuaiqianQuickPayCallBackProcessService kuaiqianQuickPayCallBackProcessService;
+	
+	@Autowired
+	private PaymentRepo paymentRepo;
 
 	@Override
 	public void callBackPayment(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 		String receiveXml = null;
 		receiveXml = (String) req.getAttribute("_receiveXml_");
-		log.info("==========快钱无卡通知信息：" + receiveXml);
+		logger.info("==========快钱无卡通知信息：" + receiveXml);
 		Map<String, String> payInfo = new HashMap<String, String>();
-		PaymentApplication pa;
 		// 通知信息校验不通过
 		try {
 			payInfo = this.checkCallbackMsg(receiveXml);
-			pa = payNoService.findApplicationByPayNo(payInfo.get("externalRefNumber"));
-			this.validCallbackValues(payInfo, pa);
-			kuaiqianNoCardCallBackProcessService.saveCallBackPayment(payInfo, pa);
+			this.validCallbackValues(payInfo);
+			kuaiqianQuickPayCallBackProcessService.saveCallBackPayment(payInfo);
 			String contentXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><MasMessage xmlns=\"http://www.99bill.com/mas_cnp_merchant_interface\"><version>1.0</version><TxnMsgContent><txnType>PUR</txnType><interactiveStatus>TR4</interactiveStatus>"
 					+ "<merchantId>"
 					+ payInfo.get("merchantId")
@@ -84,9 +76,8 @@ public class KuaiqianQuickPayPayCallBackServiceImpl implements KuaiqianPayCallBa
 					+ "</terminalId><refNumber>"
 					+ payInfo.get("refNumber") + "</refNumber></TxnMsgContent></MasMessage>";
 			resp.getWriter().write(contentXML);
-		} catch (CallBackBussinessException e) {
-			log.info("=====无卡返回信息校验失败", e);
-			transErrorService.createTransError("KUAIQIAN", payInfo.get("externalRefNumber"), "", TransType.NO_CARD_PAY, e.getMessage());
+		} catch (ServiceException e) {
+			logger.info("=====无卡返回信息校验失败", e);
 			String contentXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><MasMessage xmlns=\"http://www.99bill.com/mas_cnp_merchant_interface\"><version>1.0</version><TxnMsgContent><txnType>PUR</txnType><interactiveStatus>TR4</interactiveStatus>"
 					+ "<merchantId>"
 					+ payInfo.get("merchantId")
@@ -97,67 +88,51 @@ public class KuaiqianQuickPayPayCallBackServiceImpl implements KuaiqianPayCallBa
 			resp.getWriter().write(contentXML);
 			return;
 		} catch (Exception e) {
-			transErrorService.createTransError("KUAIQIAN", payInfo.get("externalRefNumber"), "", TransType.NO_CARD_PAY, e.getMessage());
 			throw new ServiceException(e);
-		}
-		try {
-			// 通知收付费回调结果
-			notifyPayResultService.sendPayResultToPayment(pa.getPayApplyNo());
-		} catch (Exception e) {
-			log.error("=====通知收付费支付成功信息失败", e);
-		}
-		try {
-			// 通知合作网站支付成功结果
-			if (SponsorSystem.WANGXIAO.equals(pa.getPayment().getSource())) {
-				notifyPayResultService.sendPayResultToCoop(pa.getPayApplyNo());
-			}
-		} catch (Exception e) {
-			log.error("=====通知合作网站支付成功信息失败", e);
 		}
 	}
 
-	private Map<String, String> checkCallbackMsg(String receiveXml) throws CallBackBussinessException {
+	private Map<String, String> checkCallbackMsg(String receiveXml) throws ServiceException {
 		boolean b = true;
 		try {
-			b = SignUtil.veriSignForXml(receiveXml, new ClassPathResource(Constant.NOCARD_RESOURCE.getString("publickey")).getFile().getAbsolutePath());
+			b = SignUtil.veriSignForXml(receiveXml, new ClassPathResource(CommonConst.NOCARD_RESOURCE.getString("publickey")).getFile().getAbsolutePath());
 		} catch (Exception e) {
 			throw new ServiceException("快钱无卡通知，加密信息校验失败！", e);
 		}
 		if (!b) {
-			throw new CallBackBussinessException("快钱无卡通知，信息已被串改！");
+			throw new ServiceException("快钱无卡通知，信息已被串改！");
 		}
 		@SuppressWarnings("unchecked")
 		Map<String, String> payInfo = ParseUtil.parseXML(receiveXml, new InitTrans("PUR").getTransInfo());
 		if (!"00".equals(payInfo.get("responseCode"))) {
-			log.info("=========快钱无卡支付通知，通知状态：" + payInfo.get("responseCode") + "非成功状态！");
-			transErrorService.createTransError("KUAIQIAN", payInfo.get("externalRefNumber"), null, TransType.NO_CARD_PAY,
-					"快钱无卡支付通知，通知状态：" + payInfo.get("externalRefNumber") + "非成功状态！");
-			throw new CallBackBussinessException("通知状态：" + payInfo.get("responseCode") + "非成功状态！");
+			logger.info("=========快钱无卡支付通知，通知状态：" + payInfo.get("responseCode") + "非成功状态！");
+			throw new ServiceException("通知状态：" + payInfo.get("responseCode") + "非成功状态！");
 		}
 		return payInfo;
 	}
 
-	private void validCallbackValues(Map<String, String> values, PaymentApplication pa) throws CallBackBussinessException {
+	private void validCallbackValues(Map<String, String> values) throws ServiceException {
+		String paymentNo = values.get("externalRefNumber");
+		QueryParams queryParams = new QueryParams();
+		queryParams.put("paymentNo", paymentNo);
+		Payment payment = paymentRepo.findOneByParam(Payment.class, queryParams);
 		// 获取支付信息
-		if (pa == null) {
-			log.info("=========快钱网关支付通知，支付号：" + values.get("externalRefNumber") + "无对应信息！");
-			transErrorService.createTransError("KUAIQIAN", values.get("externalRefNumber"), null, TransType.NO_CARD_PAY,
-					"快钱无卡支付通知，支付号：" + values.get("externalRefNumber") + "无对应信息！");
-			throw new CallBackBussinessException("支付号：" + values.get("externalRefNumber") + "无对应信息！");
+		if (payment == null) {
+			logger.info("=========快钱网关支付通知，支付号：" + paymentNo + "无对应信息！");
+			throw new ServiceException("支付号：" + paymentNo + "无对应信息！");
 		}
-		Payment pm = pa.getPayment();
 		// 校验支付金额
-		BigDecimal payAoumtBd = BigDecimal.valueOf(pm.getPaymentAmount());
+		BigDecimal payAoumtBd = BigDecimal.valueOf(payment.getPaymentAmount());
 		BigDecimal amountBd = new BigDecimal(values.get("amount").toString());
 		if (payAoumtBd.compareTo(amountBd) != 0) {
-			log.info("=========快钱无卡支付通知，支付通知金额：" + values.get("amount") + "元与支付申请金额：" + pm.getPaymentAmount() + "元不一致！");
-			throw new CallBackBussinessException("支付通知金额：" + values.get("amount") + "元与支付申请金额：" + pm.getPaymentAmount() + "元不一致！");
+			logger.info("=========快钱无卡支付通知，支付通知金额：" + values.get("amount") + "元与支付申请金额：" + payment.getPaymentAmount() + "元不一致！");
+			throw new ServiceException("支付通知金额：" + values.get("amount") + "元与支付申请金额：" + payment.getPaymentAmount() + "元不一致！");
 		}
-		log.info("=========快钱无卡支付通知，支付通知支付号：" + pm.getPaymentNo() + "对应支付状态:" + pm.getPaymentStatus());
-		if (!OrderStatus.PAYING.equals(pm.getPaymentStatus()) && !OrderStatus.CREATENOTPAY.equals(pm.getPaymentStatus())
-				&& !OrderStatus.INVALID.equals(pm.getPaymentStatus())) {
-			log.info("=========快钱无卡支付通知，支付通知支付号：" + pm.getPaymentNo() + "对应大地支付平台中不是支付中状态，拒绝接受此通知！");
-			throw new CallBackBussinessException("支付通知支付号：" + pm.getPaymentNo() + "对应大地支付平台中不是支付中状态，拒绝接受此通知！");
+		logger.info("=========快钱无卡支付通知，支付通知支付号：" + payment.getPaymentNo() + "对应支付状态:" + payment.getPaymentStatus());
+		if (!PaymentStatus.PS_PAYING.equals(payment.getPaymentStatus()) && !PaymentStatus.PS_WAITPAY.equals(payment.getPaymentStatus())
+				&& !PaymentStatus.PS_NOEFFITIVE.equals(payment.getPaymentStatus())) {
+			logger.info("=========快钱无卡支付通知，支付通知支付号：" + payment.getPaymentNo() + "对应大地支付平台中不是支付中状态，拒绝接受此通知！");
+			throw new ServiceException("支付通知支付号：" + payment.getPaymentNo() + "对应大地支付平台中不是支付中状态，拒绝接受此通知！");
 		}
 	}
 }

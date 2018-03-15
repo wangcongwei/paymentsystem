@@ -9,7 +9,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
-import com.ccic.eb.service.paycallback.PayCallBackProxyService;
+import com.newtouch.payment.service.PayCallBackProxyService;
+
 
 public class PayCallBackServlet extends HttpServlet {
 	private static final long serialVersionUID = 6502711264301185866L;

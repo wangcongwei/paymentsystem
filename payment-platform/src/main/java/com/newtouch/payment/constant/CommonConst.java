@@ -1,5 +1,7 @@
 package com.newtouch.payment.constant;
 
+import java.util.ResourceBundle;
+
 public class CommonConst {
 	
 	/**
@@ -83,5 +85,10 @@ public class CommonConst {
 	
 	/** 商户号 */
 	public static final String MERCHANTID = "merchantId";
+	
+	/** 请求流水 */
+	public static final String REQNO = "reqNo";
+	
+	public static ResourceBundle NOCARD_RESOURCE = ResourceBundle.getBundle("payment/quickpay/mgw");
 	
 }
