@@ -31,7 +31,7 @@ import com.newtouch.payment.service.KuaiqianQuickPayCallBackProcessService;
  * @version 1.0
  * @date 2018/03/12
  */
-@Service("kuaiqianNoCardCallBackProcessService")
+@Service("kuaiqianQuickPayCallBackProcessService")
 public class KuaiqianQuickPayCallBackProcessServiceImpl implements KuaiqianQuickPayCallBackProcessService {
 	private final static Logger logger = LoggerFactory.getLogger(KuaiqianQuickPayCallBackProcessServiceImpl.class);
 	

@@ -17,4 +17,22 @@
 		<property name="certfile" value="payment/onlinepayment/99bill.cert.rsa.20340630.cer" />
 		<property name="ksLoadPass" value="123456" />
 	</bean>
+	
+	<!-- 支付回调不同平台的服务容器 -->
+	<bean id="payCallBackServiceContainer" class="java.util.HashMap">
+		<constructor-arg>
+			<map>
+				<entry key="KUAIQIAN" value-ref="kuaiqianPlatformPayCallBackService" />
+			</map>
+		</constructor-arg>
+	</bean>
+	<!-- 支付回调快钱不同支付方式的服务容器 -->
+	<bean id="kuaiqianCallBackContainer" class="java.util.HashMap">
+		<constructor-arg>
+			<map>
+				<entry key="1" value-ref="kuaiqianGatewayPayCallBackService" />
+				<entry key="5" value-ref="kuaiqianQuickPayPayCallBackService" />
+			</map>
+		</constructor-arg>
+	</bean>
 </beans>

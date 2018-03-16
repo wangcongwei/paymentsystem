@@ -36,7 +36,7 @@ import com.newtouch.payment.service.SignatureService;
  * @version 1.0
  * @date 2018/03/12
  */
-@Service("kuaiqianOnlineCallBackProcessService")
+@Service("kuaiqianGatewayCallBackProcessService")
 public class KuaiqianGatewayCallBackProcessServiceImpl implements KuaiqianGatewayCallBackProcessService {
 	private static final Logger logger = LoggerFactory.getLogger(KuaiqianGatewayCallBackProcessServiceImpl.class);
 	@Resource(name = "kuaiqianSignatureService")

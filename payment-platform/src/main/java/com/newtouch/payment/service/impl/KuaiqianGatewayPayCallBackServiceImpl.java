@@ -29,7 +29,7 @@ import com.newtouch.payment.service.KuaiqianPayCallBackService;
  * @version 1.0
  * @date 2018/03/12
  */
-@Service("kuaiqianOnlinePayCallBackService")
+@Service("kuaiqianGatewayPayCallBackService")
 public class KuaiqianGatewayPayCallBackServiceImpl implements KuaiqianPayCallBackService {
 	private static final Logger logger = LoggerFactory.getLogger(KuaiqianGatewayPayCallBackServiceImpl.class);
 	@Resource

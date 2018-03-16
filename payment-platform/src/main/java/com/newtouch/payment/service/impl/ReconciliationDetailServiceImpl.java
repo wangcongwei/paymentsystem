@@ -9,12 +9,14 @@ package com.newtouch.payment.service.impl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.newtouch.common.view.PropertyUtils;
 import com.newtouch.payment.model.ReconciliationDetail;
 import com.newtouch.payment.repository.ReconciliationDetailRepo;
 import com.newtouch.payment.service.ReconciliationDetailService;
 
+@Service("reconciliationDetailService")
 public class ReconciliationDetailServiceImpl implements ReconciliationDetailService {
 	
 	private static Logger logger = LoggerFactory.getLogger(ReconciliationDetailServiceImpl.class);

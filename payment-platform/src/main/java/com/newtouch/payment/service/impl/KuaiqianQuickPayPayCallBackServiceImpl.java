@@ -48,7 +48,7 @@ import com.newtouch.payment.service.kuaiqian.support.util.SignUtil;
  * @author MjunLee
  * @version 1.0
  */
-@Service("kuaiqianNoCardCallBackService")
+@Service("kuaiqianQuickPayPayCallBackService")
 public class KuaiqianQuickPayPayCallBackServiceImpl implements KuaiqianPayCallBackService {
 	private final static Logger logger = LoggerFactory.getLogger(KuaiqianQuickPayPayCallBackServiceImpl.class);
 	@Resource

@@ -12,13 +12,12 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.newtouch.common.model.QueryParams;
 import com.newtouch.payment.constant.CommonConst;
@@ -46,8 +45,6 @@ public class PayCallBackProxyServiceImpl implements PayCallBackProxyService {
 	
 	@Autowired
 	private MerchantRepo merchantRepo;
-	
-	
 
 	@Override
 	public void callBackPayment(HttpServletRequest req, HttpServletResponse resp) throws IOException {
@@ -76,8 +73,9 @@ public class PayCallBackProxyServiceImpl implements PayCallBackProxyService {
 			merchantId = payInfo.get("merchantId");
 			req.setAttribute("_receiveXml_", receiveXml);
 		}
-		req.setAttribute("merchantIdCCIC", merchantId);
+		req.setAttribute("merchantId", merchantId);
 		// 根据商户号判断是哪个平台的回调以及支付方式
+		// ********设置支付的方式，快钱平台会根据这个值判断为网关、无卡还是POS***********
 		QueryParams queryParams = new QueryParams();
 		queryParams.put(CommonConst.MERCHANTID, merchantId);
 		Merchant merchant = merchantRepo.findOneByParam(Merchant.class, queryParams);
@@ -85,6 +83,7 @@ public class PayCallBackProxyServiceImpl implements PayCallBackProxyService {
 			log.error("=============商户号:" + merchantId + "不存在!");
 			throw new ServiceException("商户号:" + merchantId + "不存在!");
 		}
+		req.setAttribute("payType", merchant.getPayTypeCode());
 		// ********设置支付的方式，快钱平台会根据这个值判断为网关、无卡还是POS***********
 		PayCallBackService payCallBackService = payCallBackServiceContainer.get(merchant.getPlatformCode());
 		if (payCallBackService == null) {

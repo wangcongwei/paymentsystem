@@ -3,6 +3,7 @@ package com.newtouch.payment.service.impl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.newtouch.common.view.PropertyUtils;
 import com.newtouch.payment.model.Merchant;
@@ -15,6 +16,7 @@ import com.newtouch.payment.service.MerchantService;
  * @version 1.0
  * @date 2018/03/06
  */
+@Service("merchantService")
 public class MerchantServiceImpl implements MerchantService {
 	
 	private static Logger logger = LoggerFactory.getLogger(MerchantServiceImpl.class);

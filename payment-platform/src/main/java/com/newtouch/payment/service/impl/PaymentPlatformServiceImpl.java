@@ -29,7 +29,7 @@ import com.newtouch.payment.service.KuaiqianGateWayService;
 import com.newtouch.payment.service.KuaiqianQuickPayService;
 import com.newtouch.payment.service.PaymentPlatformService;
 
-@Service
+@Service("paymentPlatformService")
 public class PaymentPlatformServiceImpl implements PaymentPlatformService {
 	
 	private static Logger logger = LoggerFactory.getLogger(CurdServiceImpl.class);

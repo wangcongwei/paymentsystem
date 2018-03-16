@@ -16,7 +16,8 @@
 				com.newtouch.common.repository.CommonRepository,
 				com.newtouch.demo.repository.CurdRepo,
 				com.newtouch.payment.repository.ApplyDetailsRepo,
-				com.newtouch.payment.repository.AuthProRepi,
+				com.newtouch.payment.repository.AuthProRepo,
+				com.newtouch.payment.repository.MerchantRepo,
 				com.newtouch.payment.repository.PaymentRepo,
 				com.newtouch.payment.repository.PaymentTransactionRepo,
 				com.newtouch.payment.repository.ReconciliationDetailRepo
